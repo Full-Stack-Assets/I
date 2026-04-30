@@ -1,0 +1,72 @@
+# /marketing/output
+
+This folder contains all generated marketing assets.
+It is intentionally empty except for placeholder files and directories.
+The generator script will populate these folders.
+
+============================================================
+DIRECTORY: landing/
+============================================================
+# Placeholder for generated landing page Markdown files.
+# Example output file:
+#   /marketing/output/landing/clinicflow.md
+
+(Directory is empty until generation.)
+
+============================================================
+DIRECTORY: flippa/
+============================================================
+# Placeholder for generated Flippa listing Markdown files.
+# Example output file:
+#   /marketing/output/flippa/clinicflow.md
+
+(Directory is empty until generation.)
+
+============================================================
+DIRECTORY: gumroad/
+============================================================
+# Placeholder for generated Gumroad listing Markdown files.
+# Example output file:
+#   /marketing/output/gumroad/clinicflow.md
+
+(Directory is empty until generation.)
+
+============================================================
+DIRECTORY: reddit/
+============================================================
+# Placeholder for generated Reddit post Markdown files.
+# Example output file:
+#   /marketing/output/reddit/clinicflow.md
+
+(Directory is empty until generation.)
+
+============================================================
+DIRECTORY: linkedin/
+============================================================
+# Placeholder for generated LinkedIn post Markdown files.
+# Example output file:
+#   /marketing/output/linkedin/clinicflow.md
+
+(Directory is empty until generation.)
+
+============================================================
+DIRECTORY: email/
+============================================================
+# Placeholder for generated email teaser Markdown files.
+# Example output file:
+#   /marketing/output/email/clinicflow.md
+
+(Directory is empty until generation.)
+
+============================================================
+FILE: README.md
+============================================================
+# Marketing Output Directory
+
+This folder is automatically populated by:
+    /marketing/scripts/generate_all_marketing_assets.py
+
+Subfolders:
+- landing/   → Landing page copy packs
+- flippa/    → Flippa listings
+- gum
