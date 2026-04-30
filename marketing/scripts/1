@@ -1,0 +1,113 @@
+# /marketing/scripts
+
+Below are all script files required for the marketing automation system.
+Each file begins with a header comment indicating its filename.
+
+============================================================
+FILE: generate_all_marketing_assets.py
+============================================================
+import json, os
+from jinja2 import Environment, FileSystemLoader
+
+# Base directories
+BASE = os.path.dirname(os.path.abspath(__file__)) + "/.."
+TEMPLATES = BASE + "/templates"
+OUTPUT = BASE + "/output"
+
+env = Environment(loader=FileSystemLoader(TEMPLATES))
+
+def render(template, ctx):
+    return env.get_template(template).render(**ctx)
+
+def ensure(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+def main():
+    with open(BASE + "/apps.json") as f:
+        apps = json.load(f)
+
+    channels = ["landing", "flippa", "gumroad", "reddit", "linkedin", "email"]
+    for c in channels:
+        ensure(f"{OUTPUT}/{c}")
+
+    for app in apps:
+        slug = app["slug"]
+
+        for channel in channels:
+            template = f"{channel}.md"
+            out = render(template, app)
+            with open(f"{OUTPUT}/{channel}/{slug}.md", "w") as f:
+                f.write(out)
+
+    print("All marketing assets generated.")
+
+if __name__ == "__main__":
+    main()
+
+============================================================
+FILE: publish_reddit.py
+============================================================
+# Pseudocode for Reddit publishing
+# This script prepares drafts for manual posting.
+
+def publish_to_reddit(title, body, subreddit):
+    print(f"Preparing Reddit draft for r/{subreddit}...")
+    print("TITLE:", title)
+    print("BODY:", body)
+    print("Status: Draft ready for manual posting.")
+
+# Example usage:
+# publish_to_reddit("Selling ClinicFlow", "Body text...", "SaaS")
+
+============================================================
+FILE: publish_gumroad.py
+============================================================
+# Pseudocode for Gumroad publishing
+# This script prepares drafts for manual posting.
+
+def create_gumroad_product(name, description, price):
+    print("Preparing Gumroad product draft...")
+    print("Name:", name)
+    print("Price:", price)
+    print("Description:", description)
+    print("Status: Draft ready for manual posting.")
+
+# Example usage:
+# create_gumroad_product("ClinicFlow", "Description...", 199)
+
+============================================================
+FILE: publish_flippa.py
+============================================================
+# Pseudocode for Flippa listing creation
+# This script prepares drafts for manual posting.
+
+def create_flippa_listing(title, body):
+    print("Preparing Flippa listing draft...")
+    print("TITLE:", title)
+    print("BODY:", body)
+    print("Status: Draft ready for manual posting.")
+
+# Example usage:
+# create_flippa_listing("ClinicFlow — Scheduling SaaS", "Body text...")
+
+============================================================
+FILE: deploy_landing_pages.sh
+============================================================
+#!/bin/bash
+echo "Preparing landing pages for deployment..."
+echo "Upload /marketing/output/landing to your static hosting provider."
+echo "Status: Ready for manual deployment."
+
+# Example:
+# ./deploy_landing_pages.sh
+
+============================================================
+FILE: __init__.txt
+============================================================
+This folder contains:
+- Asset generator script
+- Publisher draft scripts
+- Deployment helper script
+
+All scripts are intentionally conservative and safe.
