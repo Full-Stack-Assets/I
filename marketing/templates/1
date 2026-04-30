@@ -1,0 +1,182 @@
+# /marketing/templates
+
+Below are all template files required for the marketing automation system.
+Each file begins with a header comment indicating its filename.
+
+============================================================
+FILE: landing.md
+============================================================
+# {{name}}
+## {{tagline}}
+Built for {{target_icp}} — {{primary_outcome}}
+
+### Problem
+- {{problem_1}}
+- {{problem_2}}
+- {{problem_3}}
+
+### Solution
+- {{top_features[0]}}
+- {{top_features[1]}}
+- {{top_features[2]}}
+- {{top_features[3]}}
+- {{top_features[4]}}
+
+### Tech & Monetization
+**Tech:** {{tech_stack}}  
+**Monetization:** {{monetization}}
+
+### Proof / ROI
+- {{key_metrics[0]}}
+- {{key_metrics[1]}}
+- {{key_metrics[2]}}
+
+### What’s Included
+- Full codebase  
+- Deployment guide  
+- Documentation  
+- 30 days async support  
+
+### Deal Snapshot
+Fast‑close: ${{fast_close_price}}  
+Anchor: ${{negotiation_anchor}}
+
+============================================================
+FILE: flippa.md
+============================================================
+{{name}} — {{tagline}}
+
+Executive summary  
+{{name}} is a {{category}} product built for {{target_icp}}. {{tagline}}
+
+What’s included  
+- Full codebase  
+- Deployment guide  
+- Documentation  
+- 30 days async support  
+
+Top features  
+{{top_features}}
+
+Tech stack  
+{{tech_stack}}
+
+Monetization  
+{{monetization}}
+
+Key metrics  
+{{key_metrics}}
+
+Asking price  
+Anchor: ${{negotiation_anchor}}  
+Fast-close: ${{fast_close_price}}
+
+Contact  
+acquisitions@example.com
+
+============================================================
+FILE: gumroad.md
+============================================================
+{{name}} — {{tagline}}
+
+What you get:
+- Full source code
+- Deployment guide
+- Documentation
+- Optional onboarding call
+
+Who this is for:
+- {{target_icp}}
+
+Install time:
+1–3 hours
+
+Price:
+{{gumroad_price}}
+
+Notes:
+For enterprise buyers, contact acquisitions@example.com.
+
+============================================================
+FILE: reddit.md
+============================================================
+Selling {{name}} — {{tagline}}
+
+{{name}} is built for {{target_icp}}.
+
+Key features:
+{{top_features}}
+
+Why it’s valuable:
+- Ready-to-deploy codebase
+- Monetization model included
+- 30 days async support
+
+Asking range:
+${{fast_close_price}} — ${{negotiation_anchor}}
+
+DM for teaser or data room.
+
+============================================================
+FILE: linkedin.md
+============================================================
+Selling {{category}} app: {{name}}
+
+{{name}} helps {{target_icp}} {{primary_outcome}}.
+
+Highlights:
+- {{top_features[0]}}
+- {{top_features[1]}}
+- {{monetization}}
+
+Fast-close: ${{fast_close_price}}  
+Anchor: ${{negotiation_anchor}}
+
+DM “{{slug}}” for the teaser.
+
+============================================================
+FILE: email.md
+============================================================
+Subject: Teaser: {{name}} — {{tagline}}
+
+Hi [Name],
+
+{{name}} is a {{category}} product for {{target_icp}}. {{primary_outcome}}.
+
+Snapshot:
+- Tech: {{tech_stack}}
+- Model: {{monetization}}
+- Deal: ${{fast_close_price}} fast-close, ${{negotiation_anchor}} anchor
+- Includes codebase, docs, deployment guide, 30 days support
+
+Reply “INTERESTED” for NDA + teaser.
+
+============================================================
+FILE: generator_prompt.md
+============================================================
+You are generating marketing assets for a SaaS product sale.  
+Use the following JSON object as the App Master Record:
+
+{{APP_JSON}}
+
+Follow these category rules:
+
+Vertical SaaS → use ClinicFlow exemplar tone  
+Embedded Fintech → use InvoicePro exemplar tone  
+AI Agent Layer → use DocAgent exemplar tone  
+Workflow Automation → use ZapBuilder exemplar tone  
+Revenue Acceleration → use LeadStream exemplar tone  
+
+Generate the following assets:
+
+1. Landing Page Copy Pack  
+2. Flippa Listing  
+3. Gumroad Listing  
+4. Reddit Post  
+5. LinkedIn Post  
+6. Email Teaser  
+
+Tone: operator‑oriented, concise, acquisition‑ready.  
+Do not invent features or metrics.  
+Use only the fields in the JSON.  
+Output in clean Markdown with section headers.
