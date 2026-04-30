@@ -1,0 +1,266 @@
+# /marketing/exemplars
+
+Below are all exemplar files used as tone/style references for each category.
+Each file begins with a header comment indicating its filename.
+
+============================================================
+FILE: vertical_saas_clinicflow.md
+============================================================
+# Vertical SaaS Exemplar — ClinicFlow
+
+## Overview
+ClinicFlow is the reference exemplar for all Vertical SaaS apps.  
+Tone: practical, grounded, operator‑oriented, focused on workflow efficiency.
+
+---
+
+## Landing Page Copy Pack
+
+### Hero
+**ClinicFlow**  
+Scheduling and intake for small clinics.  
+Built for independent clinics, dental offices, and physiotherapists — reduce no‑shows and streamline patient intake.
+
+### Problem
+- Staff juggle phones, paper forms, and manual reminders.  
+- Patients forget appointments or arrive without required information.  
+- Owners lack visibility into daily capacity and no‑show patterns.
+
+### Solution
+- Online booking  
+- Digital intake forms  
+- Calendar sync  
+- SMS reminders  
+- Basic billing  
+
+### Tech & Monetization
+**Tech:** React, Node.js, PostgreSQL, Stripe, Twilio  
+**Monetization:** $29–$99/mo + optional setup fee
+
+### Proof / ROI
+- Improved booking conversion  
+- Reduced no‑shows  
+- Increased daily appointment volume  
+
+### What’s Included
+- Codebase  
+- Deployment guide  
+- Documentation  
+- 30 days async support  
+
+### Deal Snapshot
+Fast‑close: $3,500  
+Anchor: $12,000  
+
+---
+
+## Flippa Listing
+(omitted here for brevity; see Segment 1 for structure — this exemplar is used for tone)
+
+---
+
+============================================================
+FILE: fintech_invoicepro.md
+============================================================
+# Embedded Fintech Exemplar — InvoicePro
+
+## Overview
+InvoicePro is the reference exemplar for all Embedded Fintech apps.  
+Tone: conservative, compliance‑aware, focused on payments reliability and cashflow improvement.
+
+---
+
+## Landing Page Copy Pack
+
+### Hero
+**InvoicePro**  
+Invoicing and payment links for SMBs.  
+Built for freelancers, agencies, and small businesses — get paid faster with simple, branded invoices.
+
+### Problem
+- Manual invoicing slows down cashflow.  
+- Clients delay payments due to friction.  
+- No visibility into invoice status.
+
+### Solution
+- Invoice templates  
+- Payment links  
+- Automated reminders  
+- PDF export  
+- Stripe/PayPal integration  
+
+### Tech & Monetization
+**Tech:** React, Node.js, Stripe, PDFKit  
+**Monetization:** $9–$49/mo + transaction fees
+
+### Proof / ROI
+- Faster time‑to‑pay  
+- Higher payment success rate  
+- Clearer cashflow visibility  
+
+### What’s Included
+- Codebase  
+- Deployment guide  
+- Documentation  
+- 30 days async support  
+
+### Deal Snapshot
+Fast‑close: $2,200  
+Anchor: $7,000  
+
+---
+
+============================================================
+FILE: ai_agent_docagent.md
+============================================================
+# AI Agent Layer Exemplar — DocAgent
+
+## Overview
+DocAgent is the reference exemplar for all AI Agent Layer apps.  
+Tone: technical, precise, grounded in realistic AI capabilities.
+
+---
+
+## Landing Page Copy Pack
+
+### Hero
+**DocAgent**  
+Document Q&A agent with knowledge base connectors.  
+Built for legal teams, support teams, and knowledge managers — get instant answers from large document sets.
+
+### Problem
+- Teams spend hours searching through PDFs.  
+- Knowledge is siloed across tools.  
+- Manual search leads to inconsistent answers.
+
+### Solution
+- Document ingestion  
+- Semantic search  
+- Q&A agent  
+- Connector library  
+- Audit logs  
+
+### Tech & Monetization
+**Tech:** Python, Vector DB, LLM connectors  
+**Monetization:** License + per‑document fees
+
+### Proof / ROI
+- Reduced research time  
+- Improved query accuracy  
+- Scalable document processing  
+
+### What’s Included
+- Codebase  
+- Architecture diagrams  
+- Deployment guide  
+- 30 days async support  
+
+### Deal Snapshot
+Fast‑close: $7,000  
+Anchor: $20,000  
+
+---
+
+============================================================
+FILE: automation_zapbuilder.md
+============================================================
+# Workflow Automation Exemplar — ZapBuilder
+
+## Overview
+ZapBuilder is the reference exemplar for all Workflow Automation apps.  
+Tone: operational, reliability‑focused, emphasizes efficiency and reduction of manual work.
+
+---
+
+## Landing Page Copy Pack
+
+### Hero
+**ZapBuilder**  
+No‑code workflow builder with connectors.  
+Built for ops teams, SMBs, and agencies — automate repetitive work without code.
+
+### Problem
+- Manual tasks consume valuable time.  
+- Integrations require engineering resources.  
+- Workflow failures go unnoticed.
+
+### Solution
+- Drag‑and‑drop builder  
+- Prebuilt templates  
+- Connectors  
+- Testing sandbox  
+- Versioning  
+
+### Tech & Monetization
+**Tech:** React, Node.js, n8n connectors, Redis  
+**Monetization:** $29–$199/mo
+
+### Proof / ROI
+- Reduced manual work  
+- Increased workflow reliability  
+- Scalable operations  
+
+### What’s Included
+- Codebase  
+- Deployment guide  
+- Documentation  
+- 30 days async support  
+
+### Deal Snapshot
+Fast‑close: $6,500  
+Anchor: $20,000  
+
+---
+
+============================================================
+FILE: revenue_leadstream.md
+============================================================
+# Revenue Acceleration Exemplar — LeadStream
+
+## Overview
+LeadStream is the reference exemplar for all Revenue Acceleration apps.  
+Tone: practical, focused on lead quality, routing, and conversion improvements.
+
+---
+
+## Landing Page Copy Pack
+
+### Hero
+**LeadStream**  
+Lead capture and enrichment pipeline.  
+Built for agencies and B2B SaaS teams — capture better leads and route them automatically.
+
+### Problem
+- Generic forms collect low‑quality leads.  
+- SDRs manually enrich and qualify prospects.  
+- Leads get lost due to inconsistent routing.
+
+### Solution
+- Lead forms  
+- Enrichment  
+- Scoring  
+- Routing  
+- CRM sync  
+
+### Tech & Monetization
+**Tech:** React, Node.js, Clearbit  
+**Monetization:** $29–$199/mo
+
+### Proof / ROI
+- Higher conversion rate  
+- Improved lead quality  
+- Reduced manual SDR work  
+
+### What’s Included
+- Codebase  
+- Deployment guide  
+- Documentation  
+- 30 days async support  
+
+### Deal Snapshot
+Fast‑close: $4,000  
+Anchor: $12,000  
+
+---
+
+# End of /marketing/exemplars
