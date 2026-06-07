@@ -1,0 +1,21 @@
+name = "contractscan"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+
+# KV namespace for credits + unlock codes.
+# Create it once:  npx wrangler kv namespace create CS_KV
+# then paste the returned id below.
+[[kv_namespaces]]
+binding = "CS_KV"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
+
+[vars]
+# Lock CORS to your site(s). Comma-separated. Use "*" only for local testing.
+ALLOWED_ORIGIN = "https://contractscan.example.com"
+FREE_TRIAL = "1"
+# Map LemonSqueezy variant IDs -> credits granted on purchase.
+VARIANT_CREDITS = "{}"
+
+# Secrets — set with `npx wrangler secret put <NAME>` (never commit these):
+#   ANTHROPIC_API_KEY            your sk-ant-... key
+#   LEMONSQUEEZY_SIGNING_SECRET  webhook signing secret from the LemonSqueezy dashboard
