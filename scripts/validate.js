@@ -39,7 +39,8 @@ function checkBash(rel) {
 }
 
 console.log('Standalone JS:');
-['backend/worker.js', 'calibration/run.js', 'scripts/validate.js', 'tests/unit.test.mjs'].forEach(checkJsFile);
+const testFiles = fs.readdirSync(path.join(root, 'tests')).filter(f => f.endsWith('.mjs')).map(f => 'tests/' + f);
+['backend/worker.js', 'calibration/run.js', 'scripts/validate.js', ...testFiles].forEach(checkJsFile);
 
 console.log('HTML inline JS:');
 ['ContractScan.html', 'backend/stats.html', 'landing/index.html'].forEach(checkInlineHtml);

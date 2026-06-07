@@ -16,7 +16,7 @@ to that buyer.
 ## Files
 
 - `ContractScan.html` — the entire app frontend (single file). Includes report export
-  (Save-as-PDF via print, Copy-summary to clipboard).
+  (Save-as-PDF via print, Copy-summary to clipboard) and a per-severity results filter.
 - `landing/index.html` — marketing landing page for the niche pitch; CTAs point at the app
   (edit `APP_URL` at the top to where the app is hosted).
 - `backend/worker.js` — Cloudflare Worker: secure API proxy + server-side credits/codes +
@@ -142,8 +142,10 @@ in dev mode (visitors supply their own key — fine for a demo).
 
 CI (`.github/workflows/ci.yml`) runs on every PR: `scripts/validate.js` (syntax-checks all JS,
 the HTML inline scripts, and the deploy script; parses the calibration answer keys) plus
-`node --test tests/*.test.mjs` (unit tests for the Worker's `mintCode`/`verifyHmac`/
-`timingSafeEqual` and the calibration recall matcher). Run locally:
+`node --test tests/*.test.mjs` — unit tests (`mintCode`/`verifyHmac`/`timingSafeEqual`, recall
+matcher) plus integration tests that drive the Worker's request handlers with a mocked KV +
+upstream `fetch` (credit metering, charge-only-on-success, 402-when-empty, model allowlist,
+redeem single-use, stats auth, bad-signature webhook). Run locally:
 
 ```bash
 node scripts/validate.js

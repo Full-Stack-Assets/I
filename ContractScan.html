@@ -29,6 +29,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;margin:0;col
 .tab{padding:10px 14px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;color:#64748b;min-height:44px;display:flex;align-items:center}
 .tab.active{background:var(--accent-light);color:var(--accent)}
 .tab:focus-visible{outline:2px solid var(--accent)}
+.sevchip{font-size:12px;font-weight:600;border:1px solid #e2e8f0;background:#fff;color:#64748b;border-radius:999px;padding:7px 13px;cursor:pointer;min-height:36px}
+.sevchip.active{background:var(--accent-light);color:var(--accent);border-color:var(--accent)}
+.sevchip:focus-visible{outline:2px solid var(--accent)}
 @media(max-width:480px){.card{padding:18px}}
 @media print{
   body{background:#fff}
@@ -141,6 +144,12 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;margin:0;col
         <button class="text-xs font-semibold accent-text border border-purple-200 rounded-lg px-3 py-1.5 hover:bg-purple-50" onclick="copySummary()" id="copy-btn" aria-label="Copy summary to clipboard">📋 Copy summary</button>
         <button class="text-xs font-semibold accent-text border border-purple-200 rounded-lg px-3 py-1.5 hover:bg-purple-50" onclick="window.print()" aria-label="Save report as PDF">⬇ Save as PDF</button>
       </div>
+    </div>
+    <div id="sev-filter" class="flex flex-wrap gap-2 mb-3 px-1 no-print" role="group" aria-label="Filter clauses by severity">
+      <button class="sevchip active" data-f="all" onclick="filterClauses('all')">All</button>
+      <button class="sevchip" data-f="critical" onclick="filterClauses('critical')">🔴 Critical</button>
+      <button class="sevchip" data-f="moderate" onclick="filterClauses('moderate')">🟡 Moderate</button>
+      <button class="sevchip" data-f="low" onclick="filterClauses('low')">🔵 Low</button>
     </div>
     <div id="clauses"></div>
 
@@ -565,13 +574,16 @@ function renderResults(r){
   clauses.sort((a,b)=>(order[a.severity]??9)-(order[b.severity]??9));
 
   const wrap = document.getElementById('clauses');
+  const filter = document.getElementById('sev-filter');
   if(!clauses.length){
+    filter.style.display = 'none';
     wrap.innerHTML = '<div class="card text-center text-gray-500 text-sm">No flagged clauses. Either this contract is unusually clean — or the text wasn\'t a contract. Read the summary above.</div>';
     return;
   }
+  filter.style.display = 'flex';
   wrap.innerHTML = clauses.map(c=>{
     const s = SEV[c.severity] || SEV.low;
-    return '<div class="card" style="border-left:4px solid '+s.border+';background:'+s.bg+'">'
+    return '<div class="card" data-sev="'+esc(c.severity)+'" style="border-left:4px solid '+s.border+';background:'+s.bg+'">'
       + '<div class="flex justify-between items-start gap-3 mb-2">'
       +   '<span class="font-bold" style="color:'+s.text+'">'+s.dot+' '+esc(c.title)+'</span>'
       +   '<span class="tag" style="background:'+s.tagbg+';color:'+s.tagtext+';white-space:nowrap">'+esc(c.section_reference||'—')+'</span>'
@@ -581,6 +593,11 @@ function renderResults(r){
       + '<p class="text-sm"><span class="font-semibold">✔ What to do:</span> '+esc(c.recommendation||'')+'</p>'
       + '</div>';
   }).join('');
+  filterClauses('all');
+}
+function filterClauses(f){
+  document.querySelectorAll('#sev-filter .sevchip').forEach(b=>b.classList.toggle('active', b.dataset.f===f));
+  document.querySelectorAll('#clauses [data-sev]').forEach(el=>{ el.style.display = (f==='all' || el.dataset.sev===f) ? '' : 'none'; });
 }
 function esc(s){ return String(s).replace(/[&<>"]/g, ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch])); }
 
