@@ -25,6 +25,7 @@ const DIR = __dirname;
 const NICHE_CONTEXT = {
   freelance: "The reader is a freelancer or small agency reviewing a contract a CLIENT has sent them. Prioritize risks that hurt the service provider: unlimited liability, IP assignment that's broader than the paid work, unpaid scope creep, payment terms (net-60/90, withheld final payment), kill fees, non-competes, indemnification, and one-sided termination.",
   saas_vendor: "The reader is a small business owner being asked to sign a SaaS or vendor agreement. Prioritize risks that hurt the customer: auto-renewal and cancellation traps, price-increase clauses, data ownership/portability, liability caps that are too low, uptime/SLA gaps, mandatory arbitration, and limitation-of-liability that excludes the vendor's own failures.",
+  nda: "The reader has been asked to sign or counter-sign an NDA (confidentiality agreement). Prioritize: overbroad or one-sided definitions of confidential information, missing standard exclusions (public/independently-developed information), perpetual or excessively long terms, non-solicitation or non-compete riders smuggled in, assignment of feedback/residuals/IP to the other side, one-way obligations dressed up as mutual, broad injunctive-relief and one-sided fee-shifting, and missing or one-sided return/destruction obligations.",
   general: "Review the contract for the risks most likely to harm whoever is being asked to sign it."
 };
 

@@ -1,6 +1,6 @@
 {
   "contract": "mutual_nda.txt",
-  "niche": "general",
+  "niche": "nda",
   "planted_red_flags": [
     { "id": "overbroad_definition", "category": "Confidentiality", "keywords": ["confidential", "not marked", "no exclusions", "public"], "note": "1.1 — definition is overbroad and lacks the standard public-information exclusion." },
     { "id": "perpetual_term", "category": "Confidentiality", "keywords": ["perpetuity", "no expiration"], "note": "2.1 — perpetual confidentiality obligation." },

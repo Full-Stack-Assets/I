@@ -45,7 +45,8 @@ const testFiles = fs.readdirSync(path.join(root, 'tests')).filter(f => f.endsWit
 console.log('HTML inline JS:');
 ['ContractScan.html', 'backend/stats.html', 'landing/index.html'].forEach(checkInlineHtml);
 
-console.log('Calibration answer keys (JSON):');
+console.log('JSON:');
+checkJson('package.json');
 fs.readdirSync(path.join(root, 'calibration/expected'))
   .filter(f => f.endsWith('.json'))
   .forEach(f => checkJson('calibration/expected/' + f));
