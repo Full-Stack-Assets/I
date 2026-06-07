@@ -1,0 +1,12 @@
+{
+  "contract": "mutual_nda.txt",
+  "niche": "nda",
+  "planted_red_flags": [
+    { "id": "overbroad_definition", "category": "Confidentiality", "keywords": ["confidential", "not marked", "no exclusions", "public"], "note": "1.1 — definition is overbroad and lacks the standard public-information exclusion." },
+    { "id": "perpetual_term", "category": "Confidentiality", "keywords": ["perpetuity", "no expiration"], "note": "2.1 — perpetual confidentiality obligation." },
+    { "id": "no_return_destroy", "category": "Confidentiality", "keywords": ["return", "destroy", "retain", "indefinitely"], "note": "2.2 — no obligation to return/destroy; copies kept indefinitely." },
+    { "id": "non_solicit", "category": "Non-solicitation", "keywords": ["solicit", "hire", "three (3) years"], "note": "3.1 — 3-year non-solicit/no-hire." },
+    { "id": "feedback_grab", "category": "IP", "keywords": ["feedback", "property", "without compensation"], "note": "4.1 — feedback/ideas become receiving party's property." },
+    { "id": "fee_shifting_liquidated", "category": "Remedies", "keywords": ["attorneys' fees", "liquidated", "$50,000"], "note": "5.1 — one-way fee shifting plus $50k liquidated damages per breach." }
+  ]
+}

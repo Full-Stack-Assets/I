@@ -1,0 +1,37 @@
+MASTER SERVICES AGREEMENT — DATA & ANALYTICS PLATFORM
+
+This Master Services Agreement governs Customer's use of the DataPlatform service provided by
+DataPlatform LLC ("Provider").
+
+1. TERM
+1.1 The initial term is twenty-four (24) months and renews automatically for equal terms
+unless Customer gives ninety (90) days' written notice before renewal.
+
+2. PRICING
+2.1 Provider may change pricing at any time during a term upon thirty (30) days' notice, and
+the new pricing applies to all subsequent invoices.
+
+3. TERMINATION
+3.1 Provider may terminate this Agreement or suspend the service at any time, for convenience,
+with thirty (30) days' notice. Customer has no equivalent right and is bound for the full term.
+
+4. DATA
+4.1 Provider may use Customer data, including in aggregated and de-identified form, to improve
+its products and to train models, and may continue such use after termination.
+
+5. WARRANTIES
+5.1 The service is provided "AS IS" with no warranties of any kind, including no warranty of
+merchantability, fitness for a particular purpose, or that the service will be error-free.
+
+6. LIMITATION OF LIABILITY
+6.1 Provider's aggregate liability shall not exceed the fees paid in the one (1) month before
+the claim. This cap applies even to Provider's gross negligence and breach of its data
+obligations.
+
+7. INDEMNIFICATION
+7.1 Customer shall indemnify Provider against all third-party claims relating to Customer's
+use of the service, with no reciprocal indemnity from Provider for its own IP infringement.
+
+8. GOVERNING LAW
+8.1 This Agreement is governed by the laws of Singapore, and all disputes must be litigated
+there.

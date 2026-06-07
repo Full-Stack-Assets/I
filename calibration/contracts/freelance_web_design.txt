@@ -1,0 +1,38 @@
+WEB DESIGN & DEVELOPMENT SERVICES AGREEMENT
+
+This Agreement is entered into between Acme Holdings LLC ("Client") and the undersigned
+contractor ("Provider") for website design and development services.
+
+1. SCOPE OF SERVICES
+Provider shall design and develop a marketing website per the specifications in Exhibit A.
+Client may request reasonable revisions and additions during the project at no additional
+charge to ensure Client satisfaction.
+
+2. FEES AND PAYMENT
+2.1 The total fee is $18,000.
+2.2 Client shall pay all invoices within ninety (90) days of receipt.
+2.3 Client shall withhold twenty percent (20%) of the total fee as a final payment, payable
+only after Client confirms, in its sole discretion, that the website is fully satisfactory.
+
+3. INTELLECTUAL PROPERTY
+3.1 All work product, and any tools, libraries, frameworks, or pre-existing materials used by
+Provider in connection with the services, shall be the exclusive property of Client upon
+creation, and Provider hereby assigns all right, title, and interest therein to Client.
+
+4. WARRANTIES AND LIABILITY
+4.1 Provider warrants the work will be free of defects.
+4.2 Provider shall indemnify and hold Client harmless from any and all claims, damages, and
+losses arising out of the services. Provider's liability under this Agreement shall be
+unlimited.
+
+5. NON-COMPETITION
+5.1 During the term and for a period of two (2) years thereafter, Provider shall not provide
+web design or development services to any business that competes with Client or operates in
+the same industry as Client.
+
+6. TERMINATION
+6.1 Client may terminate this Agreement at any time, for any reason, with no further payment
+obligation beyond work accepted in writing as of the termination date.
+
+7. GENERAL
+This Agreement is governed by the laws of the State of Delaware.

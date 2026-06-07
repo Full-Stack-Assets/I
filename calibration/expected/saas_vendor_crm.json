@@ -1,0 +1,14 @@
+{
+  "contract": "saas_vendor_crm.txt",
+  "niche": "saas_vendor",
+  "planted_red_flags": [
+    { "id": "auto_renewal", "category": "Termination", "keywords": ["automatically renew", "sixty", "60", "non-renewal"], "note": "1.2 — auto-renewal with a 60-day non-renewal window." },
+    { "id": "uncapped_price_increase", "category": "Payment", "keywords": ["increase fees", "sole discretion", "no cap"], "note": "1.3 — uncapped renewal price increases." },
+    { "id": "non_refundable", "category": "Payment", "keywords": ["non-refundable", "breach"], "note": "2.1 — fees non-refundable even on Vendor breach." },
+    { "id": "data_ownership_grab", "category": "Data", "keywords": ["perpetual", "irrevocable", "derivative", "data"], "note": "3.1 — perpetual license over Customer data, including post-termination." },
+    { "id": "no_data_export", "category": "Data", "keywords": ["return", "export", "delete"], "note": "3.2 — no data return/export; Vendor may delete on termination." },
+    { "id": "no_sla", "category": "SLA", "keywords": ["uptime", "no", "service credit", "availability"], "note": "4.1 — no uptime commitment, no service credits." },
+    { "id": "low_liability_cap", "category": "Liability", "keywords": ["liability", "$50", "fifty", "negligence"], "note": "5.1 — $50 liability cap that excludes Vendor's own negligence/breach." },
+    { "id": "mandatory_arbitration", "category": "Dispute", "keywords": ["arbitration", "class action", "jury"], "note": "6.1 — mandatory individual arbitration; class-action and jury waiver." }
+  ]
+}

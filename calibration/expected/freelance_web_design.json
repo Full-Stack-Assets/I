@@ -1,0 +1,14 @@
+{
+  "contract": "freelance_web_design.txt",
+  "niche": "freelance",
+  "planted_red_flags": [
+    { "id": "unlimited_liability", "category": "Liability", "keywords": ["unlimited", "liability"], "note": "4.2 — Provider liability is explicitly unlimited; should be capped." },
+    { "id": "broad_indemnity", "category": "Liability", "keywords": ["indemnif", "hold", "harmless"], "note": "4.2 — one-sided indemnification for any and all claims." },
+    { "id": "overbroad_ip", "category": "IP", "keywords": ["intellectual property", "assign", "pre-existing", "tools"], "note": "3.1 — IP assignment sweeps in Provider's pre-existing tools/libraries, not just the deliverable." },
+    { "id": "net_90", "category": "Payment", "keywords": ["ninety", "90", "payment"], "note": "2.2 — net-90 payment terms." },
+    { "id": "withheld_final_payment", "category": "Payment", "keywords": ["withhold", "20", "final", "sole discretion"], "note": "2.3 — 20% withheld, released only at Client's sole discretion." },
+    { "id": "unpaid_scope_creep", "category": "Scope", "keywords": ["revisions", "additions", "no additional charge"], "note": "1 — unlimited free revisions/additions = unbounded scope creep." },
+    { "id": "non_compete", "category": "Non-compete", "keywords": ["non-comp", "compete", "two (2) years"], "note": "5.1 — 2-year industry-wide non-compete." },
+    { "id": "one_sided_termination", "category": "Termination", "keywords": ["terminate", "any reason", "accepted in writing"], "note": "6.1 — Client can terminate anytime and only pay for work accepted in writing." }
+  ]
+}

@@ -9,38 +9,51 @@
 body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;margin:0;color:#1e293b}
 .accent-bg{background:var(--accent)}.accent-text{color:var(--accent)}
 .card{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.1);padding:24px;margin-bottom:20px}
-.input-field{background:#fff;border:2px solid #e2e8f0;border-radius:8px;padding:10px 12px;font-size:15px;width:100%;transition:all .2s;box-sizing:border-box}
+.input-field{background:#fff;border:2px solid #e2e8f0;border-radius:8px;padding:10px 12px;font-size:16px;width:100%;transition:all .2s;box-sizing:border-box}
 .input-field:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-light)}
-.btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:12px 20px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:14px 20px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;min-height:48px}
 .btn:hover:not(:disabled){background:#7e22ce}
+.btn:focus-visible{outline:3px solid var(--accent-light);outline-offset:2px}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 .btn-ghost{background:#fff;color:var(--accent);border:2px solid var(--accent)}
 .btn-ghost:hover:not(:disabled){background:var(--accent-light)}
 .tag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:600}
 .spinner{width:18px;height:18px;border:3px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;display:inline-block;animation:spin .7s linear infinite;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
-.gauge{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.gauge{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center}
 .dropzone{border:2px dashed #cbd5e1;border-radius:10px;padding:28px;text-align:center;color:#64748b;cursor:pointer;transition:all .2s}
 .dropzone:hover,.dropzone.drag{border-color:var(--accent);background:var(--accent-light)}
+.dropzone:focus-visible{outline:3px solid var(--accent-light);border-color:var(--accent)}
 .hidden{display:none}
 .modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
-.tab{padding:8px 14px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;color:#64748b}
+.tab{padding:10px 14px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;color:#64748b;min-height:44px;display:flex;align-items:center}
 .tab.active{background:var(--accent-light);color:var(--accent)}
+.tab:focus-visible{outline:2px solid var(--accent)}
+.sevchip{font-size:12px;font-weight:600;border:1px solid #e2e8f0;background:#fff;color:#64748b;border-radius:999px;padding:7px 13px;cursor:pointer;min-height:36px}
+.sevchip.active{background:var(--accent-light);color:var(--accent);border-color:var(--accent)}
+.sevchip:focus-visible{outline:2px solid var(--accent)}
+@media(max-width:480px){.card{padding:18px}}
+@media print{
+  body{background:#fff}
+  header,#screen-input,#screen-loading,.no-print,.modal-bg{display:none!important}
+  main{max-width:none;padding:0}
+  .card{box-shadow:none;border:1px solid #e2e8f0;break-inside:avoid}
+}
 </style></head>
 <body>
 
 <header class="bg-white border-b border-gray-200">
   <div class="max-w-3xl mx-auto px-5 py-4 flex items-center justify-between">
     <div class="flex items-center gap-3">
-      <div class="accent-bg text-white rounded-lg w-9 h-9 flex items-center justify-center font-bold text-lg">📜</div>
+      <div class="accent-bg text-white rounded-lg w-9 h-9 flex items-center justify-center font-bold text-lg" aria-hidden="true">📜</div>
       <div>
         <h1 class="text-lg font-bold leading-tight">ContractScan</h1>
         <p class="text-xs text-gray-500 leading-tight">The 3 things in this contract that'll screw you</p>
       </div>
     </div>
     <div class="flex items-center gap-3">
-      <span id="credit-badge" class="text-xs font-semibold bg-purple-50 text-purple-700 px-3 py-1.5 rounded-full"></span>
-      <button class="text-xs text-gray-400 hover:text-gray-600" onclick="openSettings()">⚙︎ Settings</button>
+      <span id="credit-badge" class="text-xs font-semibold bg-purple-50 text-purple-700 px-3 py-1.5 rounded-full" aria-live="polite"></span>
+      <button class="text-xs text-gray-400 hover:text-gray-600" onclick="openSettings()" aria-label="Open settings">⚙︎ Settings</button>
     </div>
   </div>
 </header>
@@ -48,31 +61,35 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;margin:0;col
 <main class="max-w-3xl mx-auto px-5 py-7">
 
   <!-- ============ INPUT SCREEN ============ -->
-  <section id="screen-input">
+  <section id="screen-input" aria-labelledby="input-title">
     <div class="card">
-      <h2 class="text-xl font-bold mb-1">Check a contract before you sign</h2>
+      <h2 id="input-title" class="text-xl font-bold mb-1">Check a contract before you sign</h2>
       <p class="text-sm text-gray-500 mb-5">Upload a PDF or paste the text. You'll get a risk score and the specific clauses that put you at risk — in plain English.</p>
 
-      <label class="text-sm font-semibold block mb-2">What kind of contract is this?</label>
+      <label for="niche" class="text-sm font-semibold block mb-2">What kind of contract is this?</label>
       <select id="niche" class="input-field mb-5">
         <option value="freelance">Freelancer / agency — a client contract I've been sent</option>
         <option value="saas_vendor">Small business — a SaaS / vendor agreement I'm being asked to sign</option>
+        <option value="nda">NDA — a confidentiality agreement I've been asked to sign</option>
         <option value="general">Other / general contract</option>
       </select>
 
-      <div class="flex gap-2 mb-4">
-        <div class="tab active" id="tab-paste" onclick="switchTab('paste')">Paste text</div>
-        <div class="tab" id="tab-upload" onclick="switchTab('upload')">Upload PDF</div>
+      <div class="flex gap-2 mb-4" role="tablist" aria-label="Contract input method">
+        <div class="tab active" id="tab-paste" onclick="switchTab('paste')" role="tab" tabindex="0" aria-selected="true" aria-controls="pane-paste">Paste text</div>
+        <div class="tab" id="tab-upload" onclick="switchTab('upload')" role="tab" tabindex="0" aria-selected="false" aria-controls="pane-upload">Upload PDF</div>
       </div>
 
-      <div id="pane-paste">
-        <textarea id="contract-text" class="input-field" rows="11" placeholder="Paste the full contract text here…"></textarea>
-        <p class="text-xs text-gray-400 mt-1"><span id="charcount">0</span> characters</p>
+      <div id="pane-paste" role="tabpanel" aria-labelledby="tab-paste">
+        <label for="contract-text" class="sr-only">Contract text</label>
+        <textarea id="contract-text" class="input-field" rows="11" placeholder="Paste the full contract text here…" aria-describedby="charcount"></textarea>
+        <p class="text-xs text-gray-400 mt-1"><span id="charcount">0</span> characters · <button type="button" class="accent-text underline" onclick="loadSample()">try a sample contract</button></p>
       </div>
 
-      <div id="pane-upload" class="hidden">
-        <div class="dropzone" id="dropzone" onclick="document.getElementById('file-input').click()">
-          <div class="text-3xl mb-2">📄</div>
+      <div id="pane-upload" class="hidden" role="tabpanel" aria-labelledby="tab-upload">
+        <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="Choose a PDF file or drag it here"
+             onclick="document.getElementById('file-input').click()"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('file-input').click()}">
+          <div class="text-3xl mb-2" aria-hidden="true">📄</div>
           <p class="font-semibold text-sm" id="dz-label">Click to choose a PDF, or drag it here</p>
           <p class="text-xs mt-1">PDF only · up to ~30 pages works best</p>
         </div>
@@ -80,6 +97,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;margin:0;col
       </div>
 
       <button class="btn w-full mt-5 text-base" id="analyze-btn" onclick="analyze()">🔍 Analyze contract</button>
+      <p id="estimate" class="text-[11px] text-gray-400 mt-2 text-center"></p>
 
       <p class="text-[11px] text-gray-400 mt-4 leading-relaxed">
         <strong>Not legal advice.</strong> ContractScan is an informational tool that uses AI to surface potential
@@ -88,31 +106,30 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;margin:0;col
       </p>
     </div>
 
-    <div id="error-box" class="hidden card border-l-4 border-red-500 bg-red-50">
+    <div id="error-box" class="hidden card border-l-4 border-red-500 bg-red-50" role="alert">
       <p class="font-bold text-red-800 mb-1">Something went wrong</p>
       <p class="text-sm text-red-700" id="error-msg"></p>
     </div>
   </section>
 
   <!-- ============ LOADING ============ -->
-  <section id="screen-loading" class="hidden">
+  <section id="screen-loading" class="hidden" aria-live="polite">
     <div class="card text-center py-12">
-      <div class="spinner" style="border-color:rgba(147,51,234,.25);border-top-color:var(--accent);width:36px;height:36px"></div>
+      <div class="spinner" style="border-color:rgba(147,51,234,.25);border-top-color:var(--accent);width:36px;height:36px" aria-hidden="true"></div>
       <p class="font-semibold mt-4">Reading the contract…</p>
       <p class="text-sm text-gray-500 mt-1">Flagging risky clauses and scoring exposure. ~20–40 seconds.</p>
     </div>
   </section>
 
   <!-- ============ RESULTS ============ -->
-  <section id="screen-results" class="hidden">
+  <section id="screen-results" class="hidden" aria-labelledby="results-title">
     <div class="card">
       <div class="flex items-center gap-6 flex-wrap">
-        <div class="gauge" id="risk-gauge">
+        <div class="gauge" id="risk-gauge" role="img" aria-label="Risk score gauge">
           <div class="text-3xl font-bold" id="risk-score">–</div>
-          <div class="text-xs font-semibold" id="risk-level">–</div>
         </div>
         <div class="flex-1 min-w-[220px]">
-          <h2 class="text-lg font-bold mb-1">Risk assessment</h2>
+          <h2 id="results-title" class="text-lg font-bold mb-1">Risk assessment</h2>
           <p class="text-sm text-gray-600" id="risk-summary"></p>
         </div>
       </div>
@@ -123,7 +140,20 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;margin:0;col
       </div>
     </div>
 
-    <h3 class="font-bold text-base mb-3 px-1">Flagged clauses</h3>
+    <div class="flex items-center justify-between mb-3 px-1 no-print">
+      <h3 class="font-bold text-base">Flagged clauses</h3>
+      <div class="flex gap-2">
+        <button class="text-xs font-semibold accent-text border border-purple-200 rounded-lg px-3 py-1.5 hover:bg-purple-50" onclick="copySummary()" id="copy-btn" aria-label="Copy summary to clipboard">📋 Copy summary</button>
+        <button class="text-xs font-semibold accent-text border border-purple-200 rounded-lg px-3 py-1.5 hover:bg-purple-50 hidden" onclick="emailReport()" id="email-btn" aria-label="Email this report">✉ Email me</button>
+        <button class="text-xs font-semibold accent-text border border-purple-200 rounded-lg px-3 py-1.5 hover:bg-purple-50" onclick="window.print()" aria-label="Save report as PDF">⬇ Save as PDF</button>
+      </div>
+    </div>
+    <div id="sev-filter" class="flex flex-wrap gap-2 mb-3 px-1 no-print" role="group" aria-label="Filter clauses by severity">
+      <button class="sevchip active" data-f="all" onclick="filterClauses('all')">All</button>
+      <button class="sevchip" data-f="critical" onclick="filterClauses('critical')">🔴 Critical</button>
+      <button class="sevchip" data-f="moderate" onclick="filterClauses('moderate')">🟡 Moderate</button>
+      <button class="sevchip" data-f="low" onclick="filterClauses('low')">🔵 Low</button>
+    </div>
     <div id="clauses"></div>
 
     <div class="card bg-gray-50 text-[11px] text-gray-500 leading-relaxed">
@@ -131,14 +161,14 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;margin:0;col
       wrong. ContractScan is informational only and is not a substitute for review by a licensed attorney.
     </div>
 
-    <button class="btn-ghost btn w-full" onclick="reset()">← Analyze another contract</button>
+    <button class="btn-ghost btn w-full no-print" onclick="reset()">← Analyze another contract</button>
   </section>
 </main>
 
 <!-- ============ PAYWALL MODAL ============ -->
-<div id="paywall" class="modal-bg hidden">
+<div id="paywall" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="paywall-title">
   <div class="card max-w-md w-full" style="margin:0">
-    <h2 class="text-xl font-bold mb-1">You're out of credits</h2>
+    <h2 id="paywall-title" class="text-xl font-bold mb-1">You're out of credits</h2>
     <p class="text-sm text-gray-500 mb-5">Buy a pack to keep scanning contracts. No account needed.</p>
     <div class="space-y-3">
       <button class="btn-ghost btn w-full flex justify-between items-center" onclick="buy('single')">
@@ -149,36 +179,38 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;margin:0;col
         <span>Unlimited / month</span><span class="font-bold">$49/mo</span></button>
     </div>
     <div class="mt-5 pt-5 border-t border-gray-100">
-      <label class="text-sm font-semibold block mb-2">Already paid? Enter your unlock code</label>
+      <label for="unlock-input" class="text-sm font-semibold block mb-2">Already paid? Enter your unlock code</label>
       <div class="flex gap-2">
-        <input id="unlock-input" class="input-field" placeholder="e.g. CS-XXXX">
-        <button class="btn" onclick="redeem()">Unlock</button>
+        <input id="unlock-input" class="input-field" placeholder="e.g. CS-XXXX-XXXX" autocomplete="off">
+        <button class="btn" id="redeem-btn" onclick="redeem()">Unlock</button>
       </div>
-      <p id="unlock-msg" class="text-xs mt-2"></p>
+      <p id="unlock-msg" class="text-xs mt-2" aria-live="polite"></p>
     </div>
-    <button class="text-xs text-gray-400 mt-4 hover:text-gray-600" onclick="closePaywall()">Maybe later</button>
+    <button class="text-xs text-gray-400 mt-4 hover:text-gray-600" onclick="closeModal('paywall')">Maybe later</button>
   </div>
 </div>
 
 <!-- ============ SETTINGS MODAL ============ -->
-<div id="settings" class="modal-bg hidden">
+<div id="settings" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="settings-title">
   <div class="card max-w-md w-full" style="margin:0">
-    <h2 class="text-xl font-bold mb-1">Settings</h2>
+    <h2 id="settings-title" class="text-xl font-bold mb-1">Settings</h2>
     <p class="text-sm text-gray-500 mb-4">How ContractScan reaches the Claude API.</p>
 
     <div id="proxy-status" class="text-xs rounded-lg p-3 mb-4"></div>
 
-    <label class="text-sm font-semibold block mb-1">Dev mode: Anthropic API key</label>
-    <p class="text-[11px] text-gray-400 mb-2 leading-relaxed">
-      Only use this for local testing. A key entered here is visible to anyone who opens this page —
-      <strong>never ship a public site in dev mode.</strong> For production, set <code>CONFIG.PROXY_URL</code>
-      to a serverless function that injects the key server-side.
-    </p>
-    <input id="apikey-input" class="input-field mb-2" type="password" placeholder="sk-ant-…">
-    <button class="btn w-full" onclick="saveKey()">Save key</button>
-    <p id="settings-msg" class="text-xs mt-2"></p>
+    <div id="devkey-block">
+      <label for="apikey-input" class="text-sm font-semibold block mb-1">Dev mode: Anthropic API key</label>
+      <p class="text-[11px] text-gray-400 mb-2 leading-relaxed">
+        Only use this for local testing. A key entered here is visible to anyone who opens this page —
+        <strong>never ship a public site in dev mode.</strong> For production, set <code>CONFIG.PROXY_URL</code>
+        to the backend Worker (see CONTRACTSCAN.md).
+      </p>
+      <input id="apikey-input" class="input-field mb-2" type="password" placeholder="sk-ant-…" autocomplete="off">
+      <button class="btn w-full" onclick="saveKey()">Save key</button>
+      <p id="settings-msg" class="text-xs mt-2" aria-live="polite"></p>
+    </div>
 
-    <button class="text-xs text-gray-400 mt-4 hover:text-gray-600" onclick="closeSettings()">Close</button>
+    <button class="text-xs text-gray-400 mt-4 hover:text-gray-600" onclick="closeModal('settings')">Close</button>
   </div>
 </div>
 
@@ -191,10 +223,9 @@ const CONFIG = {
   MODEL: 'claude-opus-4-8',
   MAX_TOKENS: 8000,
 
-  // RECOMMENDED for production: URL of a serverless function that forwards the
-  // request body to https://api.anthropic.com/v1/messages with your API key
-  // added server-side (so the key is never exposed in the browser).
-  // Leave '' to use dev mode (browser enters its own key — local testing only).
+  // Production: base URL of the backend Worker (see backend/ + CONTRACTSCAN.md).
+  // When set, credits are metered server-side and the API key stays on the server.
+  // Leave '' for dev mode (browser uses its own key — local testing only).
   PROXY_URL: '',
 
   // Payment links (LemonSqueezy or Stripe Payment Links).
@@ -204,31 +235,114 @@ const CONFIG = {
     sub:    'https://your-store.lemonsqueezy.com/checkout/buy/SUB'
   },
 
-  // MVP unlock codes -> credits granted. After a buyer pays, hand them a code
-  // (manually, or via your store's post-purchase redirect / email).
-  // For real anti-fraud, validate codes through PROXY_URL instead of trusting
-  // this client-side map.
+  // DEV-MODE unlock codes -> credits. In production, codes are validated by the
+  // Worker (/v1/redeem) and this map is ignored.
   UNLOCK_CODES: { 'CS-DEMO5': 5, 'CS-SINGLE': 1, 'CS-PACK': 5 },
 
-  // Free analyses a new visitor gets before the paywall.
   FREE_TRIAL: 1
 };
 
+// Tunables (extracted from magic numbers)
+const LIMITS = {
+  MIN_CHARS: 100,            // minimum pasted contract length
+  MAX_PDF_BYTES: 10 * 1024 * 1024, // 10 MB PDF cap
+  TIMEOUT_MS: 90_000,        // per-request timeout
+  MAX_RETRIES: 3,            // retries on 429 / 5xx / network error
+  RETRY_BASE_MS: 1_000,
+  CHARCOUNT_DEBOUNCE_MS: 150
+};
+
+const SERVER = !!CONFIG.PROXY_URL;            // true => use backend Worker
+const PROXY = (CONFIG.PROXY_URL || '').replace(/\/$/, '');
+
+// Model input/output price per 1M tokens — used for the pre-analysis estimate.
+const PRICES = { 'claude-opus-4-8':[5,25], 'claude-sonnet-4-6':[3,15], 'claude-haiku-4-5':[1,5] };
+
+// A short demo contract (freelance) with obvious red flags, for the "try a sample" link.
+const SAMPLE_CONTRACT = [
+  'WEB DESIGN SERVICES AGREEMENT',
+  '',
+  'This Agreement is between Acme Co. ("Client") and the contractor ("Provider").',
+  '',
+  '1. FEES. The total fee is $12,000, payable within ninety (90) days of invoice. Client may',
+  'withhold 25% as a final payment, released at Client\'s sole discretion.',
+  '',
+  '2. REVISIONS. Provider shall make all revisions and additions requested by Client at no',
+  'additional charge until Client is fully satisfied.',
+  '',
+  '3. INTELLECTUAL PROPERTY. All work product, including any pre-existing tools or libraries',
+  'used by Provider, shall be the exclusive property of Client upon creation.',
+  '',
+  '4. LIABILITY. Provider shall indemnify and hold Client harmless from any and all claims.',
+  'Provider\'s liability under this Agreement shall be unlimited.',
+  '',
+  '5. NON-COMPETE. For two (2) years after termination, Provider shall not provide services to',
+  'any business in Client\'s industry.',
+  '',
+  '6. TERMINATION. Client may terminate at any time, for any reason, paying only for work',
+  'accepted in writing as of the termination date.'
+].join('\n');
+
+function loadSample(){
+  switchTab('paste');
+  document.getElementById('niche').value = 'freelance';
+  const t = document.getElementById('contract-text');
+  t.value = SAMPLE_CONTRACT;
+  document.getElementById('charcount').textContent = SAMPLE_CONTRACT.length.toLocaleString();
+  updateEstimate(); clearError(); t.focus();
+}
+
 /* ============================================================
-   Credits (localStorage — MVP only)
+   Client token (identifies this browser to the Worker)
    ============================================================ */
-function getCredits(){
+function clientToken(){
+  let t = localStorage.getItem('cs_token');
+  if(!t){ t = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random()); localStorage.setItem('cs_token', t); }
+  return t;
+}
+
+/* ============================================================
+   Credits — server mode (Worker/KV) or dev mode (localStorage)
+   ============================================================ */
+let creditCache = null;
+function setBadge(n){
+  const b = document.getElementById('credit-badge');
+  if(n===null){ b.textContent='…'; return; }
+  b.textContent = n === 1 ? '1 credit' : n + ' credits';
+  b.style.background = n>0 ? '#f3e8ff' : '#fee2e2';
+  b.style.color = n>0 ? '#7e22ce' : '#b91c1c';
+}
+function localCredits(){
   let v = localStorage.getItem('cs_credits');
   if(v===null){ v = String(CONFIG.FREE_TRIAL); localStorage.setItem('cs_credits', v); }
   return parseInt(v,10) || 0;
 }
-function setCredits(n){ localStorage.setItem('cs_credits', String(Math.max(0,n))); renderCredits(); }
-function renderCredits(){
-  const n = getCredits();
-  const b = document.getElementById('credit-badge');
-  b.textContent = n === 1 ? '1 credit' : n + ' credits';
-  b.style.background = n>0 ? '#f3e8ff' : '#fee2e2';
-  b.style.color = n>0 ? '#7e22ce' : '#b91c1c';
+function setLocalCredits(n){ localStorage.setItem('cs_credits', String(Math.max(0,n))); }
+
+async function refreshCredits(){
+  if(SERVER){
+    try{
+      const r = await fetchJSON(PROXY + '/v1/balance?token=' + encodeURIComponent(clientToken()), { method:'GET' });
+      creditCache = r.credits; setBadge(creditCache);
+    }catch(_){ setBadge(creditCache); }
+  } else {
+    creditCache = localCredits(); setBadge(creditCache);
+  }
+  return creditCache;
+}
+
+/* ============================================================
+   Analytics — fire-and-forget funnel events (server mode only).
+   Sends event name + niche/plan only; never contract content.
+   ============================================================ */
+function track(name, extra){
+  if(!SERVER) return;
+  try{
+    fetch(PROXY + '/v1/event', {
+      method:'POST', headers:{ 'content-type':'application/json' }, keepalive:true,
+      body: JSON.stringify({ name, ...(extra||{}) })
+    }).catch(()=>{});
+  }catch(_){}
 }
 
 /* ============================================================
@@ -237,10 +351,32 @@ function renderCredits(){
 function show(id){ ['screen-input','screen-loading','screen-results'].forEach(s=>{
   document.getElementById(s).classList.toggle('hidden', s!==id); }); window.scrollTo(0,0); }
 function switchTab(t){
-  document.getElementById('tab-paste').classList.toggle('active', t==='paste');
-  document.getElementById('tab-upload').classList.toggle('active', t==='upload');
-  document.getElementById('pane-paste').classList.toggle('hidden', t!=='paste');
-  document.getElementById('pane-upload').classList.toggle('hidden', t!=='upload');
+  const paste = t==='paste';
+  document.getElementById('tab-paste').classList.toggle('active', paste);
+  document.getElementById('tab-upload').classList.toggle('active', !paste);
+  document.getElementById('tab-paste').setAttribute('aria-selected', paste);
+  document.getElementById('tab-upload').setAttribute('aria-selected', !paste);
+  document.getElementById('pane-paste').classList.toggle('hidden', !paste);
+  document.getElementById('pane-upload').classList.toggle('hidden', paste);
+  updateEstimate();
+}
+// Rough model-cost / size estimate shown before analysis (operator's API cost).
+function updateEstimate(){
+  const el = document.getElementById('estimate');
+  if(!el) return;
+  const usingPaste = !document.getElementById('pane-paste').classList.contains('hidden');
+  const [pin, pout] = PRICES[CONFIG.MODEL] || [5, 25];
+  if(usingPaste){
+    const chars = document.getElementById('contract-text').value.length;
+    if(chars < 1){ el.textContent = ''; return; }
+    const inTok = Math.ceil(chars / 4) + 500;                 // + system prompt
+    const cost = inTok / 1e6 * pin + 1500 / 1e6 * pout;       // ~1.5k output tokens
+    el.textContent = '≈ ' + inTok.toLocaleString() + ' input tokens · est. model cost $' + cost.toFixed(3);
+  } else {
+    if(!uploadedPdf){ el.textContent = ''; return; }
+    const mb = uploadedPdf.data.length * 0.75 / 1024 / 1024;  // base64 -> bytes
+    el.textContent = 'PDF ≈ ' + mb.toFixed(1) + ' MB · model cost depends on length';
+  }
 }
 function showError(msg){
   document.getElementById('error-box').classList.remove('hidden');
@@ -248,11 +384,14 @@ function showError(msg){
 }
 function clearError(){ document.getElementById('error-box').classList.add('hidden'); }
 
+// Debounced character counter
+let charTimer=null;
 document.getElementById('contract-text').addEventListener('input', e=>{
-  document.getElementById('charcount').textContent = e.target.value.length.toLocaleString();
+  clearTimeout(charTimer);
+  charTimer = setTimeout(()=>{ document.getElementById('charcount').textContent = e.target.value.length.toLocaleString(); updateEstimate(); }, LIMITS.CHARCOUNT_DEBOUNCE_MS);
 });
 
-/* ---- File upload ---- */
+/* ---- File upload (with size validation) ---- */
 let uploadedPdf = null; // {data: base64, name}
 const fileInput = document.getElementById('file-input');
 const dz = document.getElementById('dropzone');
@@ -262,10 +401,12 @@ fileInput.addEventListener('change', e=>{ if(e.target.files[0]) handleFile(e.tar
 dz.addEventListener('drop', e=>{ if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
 function handleFile(f){
   if(f.type!=='application/pdf'){ showError('Please upload a PDF, or switch to the "Paste text" tab.'); return; }
+  if(f.size > LIMITS.MAX_PDF_BYTES){ showError('That PDF is larger than ' + (LIMITS.MAX_PDF_BYTES/1024/1024) + ' MB. Try a smaller file or paste the text.'); return; }
   clearError();
   const r = new FileReader();
+  r.onerror = ()=> showError('Could not read that file. Try again or paste the text.');
   r.onload = ()=>{ uploadedPdf = { data: r.result.split(',')[1], name: f.name };
-    document.getElementById('dz-label').textContent = '✓ ' + f.name; };
+    document.getElementById('dz-label').textContent = '✓ ' + f.name; updateEstimate(); };
   r.readAsDataURL(f);
 }
 
@@ -275,6 +416,7 @@ function handleFile(f){
 const NICHE_CONTEXT = {
   freelance: "The reader is a freelancer or small agency reviewing a contract a CLIENT has sent them. Prioritize risks that hurt the service provider: unlimited liability, IP assignment that's broader than the paid work, unpaid scope creep, payment terms (net-60/90, withheld final payment), kill fees, non-competes, indemnification, and one-sided termination.",
   saas_vendor: "The reader is a small business owner being asked to sign a SaaS or vendor agreement. Prioritize risks that hurt the customer: auto-renewal and cancellation traps, price-increase clauses, data ownership/portability, liability caps that are too low, uptime/SLA gaps, mandatory arbitration, and limitation-of-liability that excludes the vendor's own failures.",
+  nda: "The reader has been asked to sign or counter-sign an NDA (confidentiality agreement). Prioritize: overbroad or one-sided definitions of confidential information, missing standard exclusions (public/independently-developed information), perpetual or excessively long terms, non-solicitation or non-compete riders smuggled in, assignment of feedback/residuals/IP to the other side, one-way obligations dressed up as mutual, broad injunctive-relief and one-sided fee-shifting, and missing or one-sided return/destruction obligations.",
   general: "Review the contract for the risks most likely to harm whoever is being asked to sign it."
 };
 
@@ -327,34 +469,93 @@ function buildBody(niche, contractText){
 }
 
 /* ============================================================
-   API call (proxy or direct browser)
+   Networking — timeout + retry with exponential backoff
+   ============================================================ */
+const sleep = (ms)=> new Promise(r=>setTimeout(r,ms));
+
+async function fetchWithRetry(url, opts){
+  let lastErr;
+  for(let attempt=0; attempt<=LIMITS.MAX_RETRIES; attempt++){
+    const ctrl = new AbortController();
+    const timer = setTimeout(()=>ctrl.abort(), LIMITS.TIMEOUT_MS);
+    try{
+      const res = await fetch(url, { ...opts, signal: ctrl.signal });
+      clearTimeout(timer);
+      // Retry transient server / rate-limit errors; surface everything else.
+      if((res.status===429 || res.status>=500) && attempt < LIMITS.MAX_RETRIES){
+        const ra = parseInt(res.headers.get('retry-after')||'0',10);
+        await sleep(ra>0 ? ra*1000 : LIMITS.RETRY_BASE_MS * Math.pow(2,attempt) + Math.random()*300);
+        continue;
+      }
+      return res;
+    }catch(err){
+      clearTimeout(timer);
+      lastErr = err.name==='AbortError'
+        ? new Error('The request timed out. Try again, or use a shorter contract.')
+        : new Error('Network error — check your connection and try again.');
+      if(attempt < LIMITS.MAX_RETRIES){ await sleep(LIMITS.RETRY_BASE_MS * Math.pow(2,attempt)); continue; }
+    }
+  }
+  throw lastErr || new Error('Request failed.');
+}
+
+// Small JSON helper for balance/redeem calls
+async function fetchJSON(url, opts){
+  const res = await fetchWithRetry(url, opts);
+  const txt = await res.text();
+  let data; try{ data = txt ? JSON.parse(txt) : {}; }catch(_){ throw new Error('Unexpected response from server.'); }
+  if(!res.ok) throw Object.assign(new Error(data.error || ('Error ' + res.status)), { status: res.status, data });
+  return data;
+}
+
+/* ============================================================
+   API call — returns { result, remaining }
    ============================================================ */
 async function callClaude(body){
-  let url, headers;
-  if(CONFIG.PROXY_URL){
-    url = CONFIG.PROXY_URL;
-    headers = { 'content-type':'application/json' };
-  } else {
-    const key = localStorage.getItem('cs_api_key');
-    if(!key) throw new Error('No API connection configured. Open Settings to add an API key (dev) or set CONFIG.PROXY_URL (production).');
-    url = 'https://api.anthropic.com/v1/messages';
-    headers = {
+  if(SERVER){
+    const res = await fetchWithRetry(PROXY + '/v1/analyze', {
+      method:'POST',
+      headers:{ 'content-type':'application/json', 'X-CS-Token': clientToken() },
+      body: JSON.stringify(body)
+    });
+    const txt = await res.text();
+    if(res.status===402){ const e = new Error('No credits'); e.code='PAYWALL'; throw e; }
+    if(!res.ok){
+      let msg=''; try{ msg=JSON.parse(txt).error?.message || JSON.parse(txt).error || ''; }catch(_){}
+      throw new Error('API error ' + res.status + (msg ? ': ' + msg : ''));
+    }
+    const remaining = parseInt(res.headers.get('X-CS-Credits')||'',10);
+    return { result: parseAnalysis(txt), remaining: isNaN(remaining)?null:remaining };
+  }
+
+  // Dev mode: direct browser call
+  const key = localStorage.getItem('cs_api_key');
+  if(!key) throw new Error('No API connection configured. Open Settings to add an API key (dev) or set CONFIG.PROXY_URL (production).');
+  const res = await fetchWithRetry('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{
       'content-type':'application/json',
       'x-api-key': key,
       'anthropic-version':'2023-06-01',
       'anthropic-dangerous-direct-browser-access':'true'
-    };
-  }
-  const res = await fetch(url, { method:'POST', headers, body: JSON.stringify(body) });
+    },
+    body: JSON.stringify(body)
+  });
+  const txt = await res.text();
   if(!res.ok){
-    let detail = '';
-    try { detail = (await res.json()).error?.message || ''; } catch(_) {}
-    throw new Error('API error ' + res.status + (detail ? ': ' + detail : ''));
+    let msg=''; try{ msg=JSON.parse(txt).error?.message || ''; }catch(_){}
+    throw new Error('API error ' + res.status + (msg ? ': ' + msg : ''));
   }
-  const data = await res.json();
-  const textBlock = (data.content||[]).find(b=>b.type==='text');
-  if(!textBlock) throw new Error('Empty response from model.');
-  return JSON.parse(textBlock.text);
+  return { result: parseAnalysis(txt), remaining: null };
+}
+
+function parseAnalysis(txt){
+  let data; try{ data = JSON.parse(txt); }catch(_){ throw new Error('Could not read the model response. Please try again.'); }
+  const block = (data.content||[]).find(b=>b.type==='text');
+  if(!block) throw new Error('The model returned an empty response. Please try again.');
+  let parsed; try{ parsed = JSON.parse(block.text); }catch(_){ throw new Error('The analysis came back malformed. Please try again.'); }
+  if(typeof parsed.risk_score !== 'number' || !Array.isArray(parsed.flagged_clauses)) throw new Error('The analysis was incomplete. Please try again.');
+  return parsed;
 }
 
 /* ============================================================
@@ -366,20 +567,31 @@ async function analyze(){
   const text = document.getElementById('contract-text').value.trim();
   const usingPaste = !document.getElementById('pane-paste').classList.contains('hidden');
 
-  if(usingPaste && text.length < 100){ showError('Paste at least a paragraph of the contract (100+ characters), or upload a PDF.'); return; }
+  if(usingPaste && text.length < LIMITS.MIN_CHARS){ showError('Paste at least a paragraph of the contract (' + LIMITS.MIN_CHARS + '+ characters), or upload a PDF.'); return; }
   if(!usingPaste && !uploadedPdf){ showError('Choose a PDF first, or switch to "Paste text".'); return; }
 
-  if(getCredits() <= 0){ openPaywall(); return; }
+  // Pre-check credits (server is the source of truth and re-checks on /v1/analyze).
+  const have = await refreshCredits();
+  if((have ?? 0) <= 0){ openPaywall(); return; }
 
   show('screen-loading');
+  track('analyze', { niche });
   try{
     const body = buildBody(niche, usingPaste ? text : null);
-    const result = await callClaude(body);
-    setCredits(getCredits() - 1);   // only charge on success
+    const { result, remaining } = await callClaude(body);
+    track('analyze_success', { niche });
+
+    if(SERVER){
+      if(remaining!==null){ creditCache = remaining; setBadge(remaining); } else { refreshCredits(); }
+    } else {
+      setLocalCredits(localCredits() - 1); refreshCredits();   // charge only on success
+    }
+
     renderResults(result);
     show('screen-results');
   }catch(err){
     show('screen-input');
+    if(err.code==='PAYWALL'){ refreshCredits(); openPaywall(); return; }
     showError(err.message || String(err));
   }
 }
@@ -398,14 +610,17 @@ function gaugeColor(score){
   if(score>=25) return '#eab308';
   return '#22c55e';
 }
+let lastResult = null;
 function renderResults(r){
-  const color = gaugeColor(r.risk_score||0);
+  lastResult = r;
+  const score = Math.max(0, Math.min(100, r.risk_score||0));
+  const color = gaugeColor(score);
   const g = document.getElementById('risk-gauge');
-  g.style.background = 'conic-gradient(' + color + ' ' + (r.risk_score||0) + '%, #e2e8f0 0)';
+  g.style.background = 'conic-gradient(' + color + ' ' + score + '%, #e2e8f0 0)';
+  g.setAttribute('aria-label', 'Risk score ' + score + ' out of 100 (' + (r.risk_level||'') + ')');
   g.innerHTML = '<div style="width:96px;height:96px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center">'
-    + '<div class="text-3xl font-bold" style="color:'+color+'">'+(r.risk_score ?? '–')+'</div>'
+    + '<div class="text-3xl font-bold" style="color:'+color+'">'+score+'</div>'
     + '<div class="text-[10px] font-semibold text-gray-400">/ 100</div></div>';
-  document.getElementById('risk-level').textContent = '';
   document.getElementById('risk-summary').textContent = r.summary || '';
 
   const clauses = r.flagged_clauses || [];
@@ -419,13 +634,16 @@ function renderResults(r){
   clauses.sort((a,b)=>(order[a.severity]??9)-(order[b.severity]??9));
 
   const wrap = document.getElementById('clauses');
+  const filter = document.getElementById('sev-filter');
   if(!clauses.length){
+    filter.style.display = 'none';
     wrap.innerHTML = '<div class="card text-center text-gray-500 text-sm">No flagged clauses. Either this contract is unusually clean — or the text wasn\'t a contract. Read the summary above.</div>';
     return;
   }
+  filter.style.display = 'flex';
   wrap.innerHTML = clauses.map(c=>{
     const s = SEV[c.severity] || SEV.low;
-    return '<div class="card" style="border-left:4px solid '+s.border+';background:'+s.bg+'">'
+    return '<div class="card" data-sev="'+esc(c.severity)+'" style="border-left:4px solid '+s.border+';background:'+s.bg+'">'
       + '<div class="flex justify-between items-start gap-3 mb-2">'
       +   '<span class="font-bold" style="color:'+s.text+'">'+s.dot+' '+esc(c.title)+'</span>'
       +   '<span class="tag" style="background:'+s.tagbg+';color:'+s.tagtext+';white-space:nowrap">'+esc(c.section_reference||'—')+'</span>'
@@ -435,38 +653,106 @@ function renderResults(r){
       + '<p class="text-sm"><span class="font-semibold">✔ What to do:</span> '+esc(c.recommendation||'')+'</p>'
       + '</div>';
   }).join('');
+  filterClauses('all');
+}
+function filterClauses(f){
+  document.querySelectorAll('#sev-filter .sevchip').forEach(b=>b.classList.toggle('active', b.dataset.f===f));
+  document.querySelectorAll('#clauses [data-sev]').forEach(el=>{ el.style.display = (f==='all' || el.dataset.sev===f) ? '' : 'none'; });
 }
 function esc(s){ return String(s).replace(/[&<>"]/g, ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch])); }
+
+async function copySummary(){
+  if(!lastResult) return;
+  const r = lastResult;
+  const lines = [
+    'ContractScan — risk assessment',
+    'Risk score: ' + (r.risk_score ?? '–') + '/100 (' + (r.risk_level||'') + ')',
+    '',
+    r.summary || '',
+    '',
+    'Flagged clauses:'
+  ];
+  (r.flagged_clauses||[]).forEach((c,i)=>{
+    lines.push((i+1) + '. [' + (c.severity||'').toUpperCase() + '] ' + (c.title||'') + ' (' + (c.section_reference||'—') + ')');
+    lines.push('   ' + (c.explanation||''));
+    lines.push('   What to do: ' + (c.recommendation||''));
+  });
+  lines.push('', 'Not legal advice — informational only. Generated by ContractScan.');
+  const text = lines.join('\n');
+  const btn = document.getElementById('copy-btn');
+  try{
+    await navigator.clipboard.writeText(text);
+    const old = btn.textContent; btn.textContent='✓ Copied'; setTimeout(()=>btn.textContent=old, 1500);
+  }catch(_){
+    // Clipboard API unavailable (non-HTTPS / older browser) — fall back to a prompt.
+    window.prompt('Copy the summary:', text);
+  }
+}
+
+async function emailReport(){
+  if(!lastResult) return;
+  const to = window.prompt('Email this report to:');
+  if(!to) return;
+  const btn = document.getElementById('email-btn'); const old = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try{
+    await fetchJSON(PROXY + '/v1/email-report', {
+      method:'POST', headers:{ 'content-type':'application/json' },
+      body: JSON.stringify({ token: clientToken(), to, analysis: lastResult })
+    });
+    btn.textContent = '✓ Sent'; setTimeout(()=>{ btn.textContent = old; }, 1800);
+  }catch(e){
+    btn.textContent = old;
+    window.alert(e.message || 'Could not send the email.');
+  }finally{ btn.disabled = false; }
+}
 
 function reset(){
   document.getElementById('contract-text').value='';
   document.getElementById('charcount').textContent='0';
   uploadedPdf=null; document.getElementById('file-input').value='';
   document.getElementById('dz-label').textContent='Click to choose a PDF, or drag it here';
-  clearError(); switchTab('paste'); show('screen-input');
+  clearError(); switchTab('paste'); updateEstimate(); show('screen-input');
 }
 
 /* ============================================================
    Paywall + unlock
    ============================================================ */
-function openPaywall(){ document.getElementById('paywall').classList.remove('hidden'); }
-function closePaywall(){ document.getElementById('paywall').classList.add('hidden'); }
-function buy(plan){ const url = plan==='sub'?CONFIG.PAYMENT_LINKS.sub:CONFIG.PAYMENT_LINKS[plan]; window.open(url,'_blank'); }
-function redeem(){
+function openPaywall(){ track('paywall'); openModal('paywall'); }
+function buy(plan){ track('buy', { plan }); const url = CONFIG.PAYMENT_LINKS[plan]; if(url) window.open(url,'_blank','noopener'); }
+
+async function redeem(){
   const code = document.getElementById('unlock-input').value.trim().toUpperCase();
   const msg = document.getElementById('unlock-msg');
-  const grant = CONFIG.UNLOCK_CODES[code];
-  if(grant){
-    // Prevent the same code being reused in this browser.
-    const used = JSON.parse(localStorage.getItem('cs_used_codes')||'[]');
-    if(used.includes(code)){ msg.textContent='That code was already used on this device.'; msg.style.color='#b91c1c'; return; }
-    used.push(code); localStorage.setItem('cs_used_codes', JSON.stringify(used));
-    setCredits(getCredits()+grant);
-    msg.textContent='✓ '+grant+' credit'+(grant>1?'s':'')+' added.'; msg.style.color='#15803d';
-    setTimeout(closePaywall, 900);
-  } else {
-    msg.textContent='That code wasn\'t recognized.'; msg.style.color='#b91c1c';
-  }
+  const btn = document.getElementById('redeem-btn');
+  if(!code){ msg.textContent='Enter a code first.'; msg.style.color='#b91c1c'; return; }
+
+  btn.disabled = true;
+  try{
+    if(SERVER){
+      const r = await fetchJSON(PROXY + '/v1/redeem', {
+        method:'POST', headers:{ 'content-type':'application/json' },
+        body: JSON.stringify({ token: clientToken(), code })
+      });
+      creditCache = r.credits; setBadge(creditCache); track('redeem');
+      msg.textContent = '✓ ' + (r.added||0) + ' credit' + ((r.added||0)>1?'s':'') + ' added.'; msg.style.color='#15803d';
+      setTimeout(()=>closeModal('paywall'), 900);
+    } else {
+      const grant = CONFIG.UNLOCK_CODES[code];
+      if(!grant){ msg.textContent="That code wasn't recognized."; msg.style.color='#b91c1c'; return; }
+      const used = JSON.parse(localStorage.getItem('cs_used_codes')||'[]');
+      if(used.includes(code)){ msg.textContent='That code was already used on this device.'; msg.style.color='#b91c1c'; return; }
+      used.push(code); localStorage.setItem('cs_used_codes', JSON.stringify(used));
+      setLocalCredits(localCredits()+grant); refreshCredits();
+      msg.textContent='✓ '+grant+' credit'+(grant>1?'s':'')+' added.'; msg.style.color='#15803d';
+      setTimeout(()=>closeModal('paywall'), 900);
+    }
+  }catch(err){
+    msg.textContent = err.status===409 ? 'That code was already used.'
+                    : err.status===404 ? "That code wasn't recognized."
+                    : (err.message || 'Could not redeem that code.');
+    msg.style.color='#b91c1c';
+  }finally{ btn.disabled = false; }
 }
 
 /* ============================================================
@@ -474,28 +760,61 @@ function redeem(){
    ============================================================ */
 function openSettings(){
   const box = document.getElementById('proxy-status');
-  if(CONFIG.PROXY_URL){
-    box.textContent='✓ Production mode — requests go through your server proxy. The API key stays server-side.';
+  document.getElementById('devkey-block').style.display = SERVER ? 'none' : 'block';
+  if(SERVER){
+    box.textContent='✓ Production mode — requests go through your backend Worker. The API key and credits stay server-side.';
     box.style.background='#dcfce7'; box.style.color='#166534';
   } else {
     box.textContent='⚠ Dev mode — no proxy set. Requests go straight from the browser using the key below. Fine for testing, not for a public site.';
     box.style.background='#fef9c3'; box.style.color='#854d0e';
   }
   document.getElementById('apikey-input').value = localStorage.getItem('cs_api_key')||'';
-  document.getElementById('settings').classList.remove('hidden');
+  openModal('settings');
 }
-function closeSettings(){ document.getElementById('settings').classList.add('hidden'); }
 function saveKey(){
   const k = document.getElementById('apikey-input').value.trim();
-  if(k) localStorage.setItem('cs_api_key', k); else localStorage.removeItem('cs_api_key');
   const m = document.getElementById('settings-msg');
+  if(k && !k.startsWith('sk-ant-')){ m.textContent='That doesn\'t look like an Anthropic key (should start with "sk-ant-").'; m.style.color='#b91c1c'; return; }
+  if(k) localStorage.setItem('cs_api_key', k); else localStorage.removeItem('cs_api_key');
   m.textContent='✓ Saved.'; m.style.color='#15803d';
 }
 
 /* ============================================================
+   Modal accessibility — open/close, Esc, focus trap
+   ============================================================ */
+let activeModal = null, lastFocus = null;
+function openModal(id){
+  const m = document.getElementById(id);
+  lastFocus = document.activeElement;
+  m.classList.remove('hidden');
+  activeModal = m;
+  const focusable = m.querySelector('input,button,select,textarea,a[href]');
+  if(focusable) focusable.focus();
+}
+function closeModal(id){
+  document.getElementById(id).classList.add('hidden');
+  if(activeModal && activeModal.id===id) activeModal = null;
+  if(lastFocus && lastFocus.focus) lastFocus.focus();
+}
+document.addEventListener('keydown', e=>{
+  if(!activeModal) return;
+  if(e.key==='Escape'){ closeModal(activeModal.id); return; }
+  if(e.key==='Tab'){
+    const f = [...activeModal.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select,textarea')]
+                .filter(el=>el.offsetParent!==null);
+    if(!f.length) return;
+    const first=f[0], last=f[f.length-1];
+    if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+  }
+});
+
+/* ============================================================
    Boot
    ============================================================ */
-renderCredits();
+if(SERVER) document.getElementById('email-btn').classList.remove('hidden');
+refreshCredits();
+track('load');
 </script>
 </body>
 </html>

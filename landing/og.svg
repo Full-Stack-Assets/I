@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9333ea"/>
+      <stop offset="1" stop-color="#6b21a8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <text x="80" y="150" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="40" fill="#e9d5ff" font-weight="700">📜 ContractScan</text>
+  <text x="80" y="300" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="88" fill="#ffffff" font-weight="800">The 3 things in this</text>
+  <text x="80" y="400" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="88" fill="#ffffff" font-weight="800">contract that'll <tspan fill="#fde047">screw you</tspan></text>
+  <text x="80" y="500" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="36" fill="#e9d5ff">AI contract red-flag check · $20 a scan · not legal advice</text>
+</svg>

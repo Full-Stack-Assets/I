@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ContractScan — Admin Stats</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;margin:0;color:#1e293b}
+.card{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.1);padding:20px;margin-bottom:16px}
+.input-field{border:2px solid #e2e8f0;border-radius:8px;padding:10px 12px;width:100%;box-sizing:border-box;font-size:15px}
+.btn{background:#9333ea;color:#fff;border:none;border-radius:8px;padding:12px 18px;font-weight:600;cursor:pointer}
+.bar{height:26px;border-radius:6px;background:#9333ea;color:#fff;font-size:12px;display:flex;align-items:center;padding:0 8px;white-space:nowrap;min-width:1px}
+th,td{text-align:left;padding:6px 10px;border-bottom:1px solid #f1f5f9;font-size:14px}
+th{color:#64748b;font-size:12px;text-transform:uppercase}
+</style></head>
+<body>
+<div class="max-w-2xl mx-auto px-5 py-8">
+  <h1 class="text-2xl font-bold mb-1">ContractScan — Conversion Stats</h1>
+  <p class="text-sm text-gray-500 mb-5">Aggregate funnel counts from the Worker. Read-only.</p>
+
+  <div class="card">
+    <label class="text-sm font-semibold block mb-1">Worker base URL</label>
+    <input id="base" class="input-field mb-3" placeholder="https://contractscan.you.workers.dev">
+    <label class="text-sm font-semibold block mb-1">Admin token</label>
+    <input id="token" class="input-field mb-3" type="password" placeholder="ADMIN_TOKEN secret">
+    <button class="btn w-full" onclick="load()">Load stats</button>
+    <p id="msg" class="text-sm mt-2 text-red-600"></p>
+  </div>
+
+  <div id="out"></div>
+</div>
+
+<script>
+const FUNNEL = [
+  ['load','Visited app'],
+  ['analyze','Started analysis'],
+  ['analyze_success','Got results'],
+  ['paywall','Hit paywall'],
+  ['buy','Clicked buy'],
+  ['redeem','Redeemed code']
+];
+
+async function load(){
+  const base = document.getElementById('base').value.replace(/\/$/,'');
+  const token = document.getElementById('token').value.trim();
+  const msg = document.getElementById('msg'); msg.textContent='';
+  localStorage.setItem('cs_admin_base', base); localStorage.setItem('cs_admin_token', token);
+  try{
+    const r = await fetch(base + '/v1/stats', { headers: { 'X-Admin-Token': token } });
+    if(!r.ok) throw new Error(r.status===401 ? 'Unauthorized — check the admin token.' : 'Error ' + r.status);
+    render((await r.json()).stats || {});
+  }catch(e){ msg.textContent = e.message; }
+}
+
+function render(s){
+  const get = k => s[k] || 0;
+  const max = Math.max(1, ...FUNNEL.map(([k])=>get(k)));
+  const loads = get('load') || 1;
+
+  let html = '<div class="card"><h2 class="font-bold mb-3">Funnel</h2>';
+  FUNNEL.forEach(([k,label])=>{
+    const v = get(k);
+    const pct = Math.round(100 * v / loads);
+    html += '<div class="mb-2"><div class="flex justify-between text-sm mb-1"><span>'+label+'</span><span class="text-gray-500">'+v+' · '+pct+'% of visits</span></div>'
+         + '<div class="bar" style="width:'+Math.max(2, Math.round(100*v/max))+'%">'+v+'</div></div>';
+  });
+  // Headline conversion: visits -> buy clicks
+  const cr = loads ? (100 * get('buy') / loads).toFixed(1) : '0';
+  html += '<p class="text-sm mt-3 text-gray-600">Visit→buy-click rate: <strong>'+cr+'%</strong></p></div>';
+
+  html += breakdown('Analyses by niche', s, 'analyze_success:niche:');
+  html += breakdown('Buy clicks by plan', s, 'buy:plan:');
+
+  document.getElementById('out').innerHTML = html;
+}
+
+function breakdown(title, s, prefix){
+  const rows = Object.keys(s).filter(k=>k.startsWith(prefix))
+    .map(k=>[k.slice(prefix.length), s[k]]).sort((a,b)=>b[1]-a[1]);
+  if(!rows.length) return '';
+  let h = '<div class="card"><h2 class="font-bold mb-3">'+title+'</h2><table style="width:100%"><tr><th>Segment</th><th>Count</th></tr>';
+  rows.forEach(([seg,n])=> h += '<tr><td>'+seg+'</td><td>'+n+'</td></tr>');
+  return h + '</table></div>';
+}
+
+// Restore last-used values
+document.getElementById('base').value = localStorage.getItem('cs_admin_base') || '';
+document.getElementById('token').value = localStorage.getItem('cs_admin_token') || '';
+</script>
+</body>
+</html>
