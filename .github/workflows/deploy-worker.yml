@@ -1,0 +1,89 @@
+name: Deploy Worker (Cloudflare)
+
+# Deploy the ContractScan Worker without a laptop/CLI — runs entirely on GitHub.
+# Tap Actions → "Deploy Worker (Cloudflare)" → Run workflow.
+#
+# Required repo SECRET (Settings → Secrets and variables → Actions → Secrets):
+#   CLOUDFLARE_API_TOKEN          (Cloudflare dashboard → My Profile → API Tokens →
+#                                  "Edit Cloudflare Workers" template)
+#   ANTHROPIC_API_KEY             your sk-ant-... key
+#   LEMONSQUEEZY_SIGNING_SECRET   (optional now; needed for the purchase webhook)
+#   RESEND_API_KEY                (optional) email delivery
+#   ADMIN_TOKEN                   (optional) /v1/stats password
+#   CLOUDFLARE_ACCOUNT_ID         (optional; only if your token spans multiple accounts)
+# Optional repo VARIABLES (same screen → Variables) override wrangler.toml [vars]:
+#   ALLOWED_ORIGIN, VARIANT_CREDITS, FROM_EMAIL, FREE_TRIAL
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Preflight
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::error::Add a CLOUDFLARE_API_TOKEN repo secret first (Settings → Secrets and variables → Actions)."
+            exit 1
+          fi
+
+      - name: Ensure KV namespace + patch config
+        run: |
+          set -e
+          if grep -q REPLACE_WITH_KV_NAMESPACE_ID wrangler.toml; then
+            OUT="$(npx --yes wrangler@4 kv namespace create CS_KV 2>&1 || true)"
+            echo "$OUT"
+            ID="$(printf '%s' "$OUT" | grep -oE '[0-9a-f]{32}' | head -n1)"
+            if [ -z "$ID" ]; then
+              ID="$(npx --yes wrangler@4 kv namespace list 2>/dev/null | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{try{const a=JSON.parse(s);const m=a.find(n=>/CS_KV/.test(n.title||''));if(m)process.stdout.write(m.id)}catch(e){}})")"
+            fi
+            if [ -z "$ID" ]; then echo "::error::Could not determine the CS_KV namespace id."; exit 1; fi
+            sed -i "s/REPLACE_WITH_KV_NAMESPACE_ID/$ID/" wrangler.toml
+            echo "Using KV namespace id: $ID"
+          else
+            echo "KV id already set in wrangler.toml."
+          fi
+
+      - name: Deploy
+        env:
+          ALLOWED_ORIGIN: ${{ vars.ALLOWED_ORIGIN }}
+          VARIANT_CREDITS: ${{ vars.VARIANT_CREDITS }}
+          FROM_EMAIL: ${{ vars.FROM_EMAIL }}
+          FREE_TRIAL: ${{ vars.FREE_TRIAL }}
+        run: |
+          args=()
+          [ -n "$ALLOWED_ORIGIN" ]  && args+=(--var "ALLOWED_ORIGIN:$ALLOWED_ORIGIN")
+          [ -n "$VARIANT_CREDITS" ] && args+=(--var "VARIANT_CREDITS:$VARIANT_CREDITS")
+          [ -n "$FROM_EMAIL" ]      && args+=(--var "FROM_EMAIL:$FROM_EMAIL")
+          [ -n "$FREE_TRIAL" ]      && args+=(--var "FREE_TRIAL:$FREE_TRIAL")
+          npx --yes wrangler@4 deploy "${args[@]}"
+
+      - name: Set secrets
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          LEMONSQUEEZY_SIGNING_SECRET: ${{ secrets.LEMONSQUEEZY_SIGNING_SECRET }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ADMIN_TOKEN: ${{ secrets.ADMIN_TOKEN }}
+        run: |
+          put() { if [ -n "$2" ]; then printf '%s' "$2" | npx --yes wrangler@4 secret put "$1"; else echo "skip $1 (secret not set)"; fi; }
+          put ANTHROPIC_API_KEY "$ANTHROPIC_API_KEY"
+          put LEMONSQUEEZY_SIGNING_SECRET "$LEMONSQUEEZY_SIGNING_SECRET"
+          put RESEND_API_KEY "$RESEND_API_KEY"
+          put ADMIN_TOKEN "$ADMIN_TOKEN"
+
+      - name: Next steps
+        run: |
+          echo "Deployed. Copy the Worker URL printed above, then set it as the PROXY_URL repo"
+          echo "Variable so the published app uses production mode (and re-run the Pages workflow)."

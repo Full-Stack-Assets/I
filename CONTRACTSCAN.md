@@ -50,7 +50,31 @@ visible to anyone who opens the page, and credits/codes can be bypassed from the
 
 ### 1. Deploy the backend
 
-One shot (creates the KV namespace, prompts for secrets, deploys):
+#### Option A — no laptop (iPhone / phone-only): deploy via GitHub Actions
+
+You can't run the CLI from a phone, so deploy from GitHub instead. In your phone's browser at
+github.com (request the desktop site if needed):
+
+1. **Cloudflare** (dash.cloudflare.com → My Profile → API Tokens → *Edit Cloudflare Workers*
+   template) → create a token. Copy it.
+2. **GitHub repo → Settings → Secrets and variables → Actions → Secrets**, add:
+   - `CLOUDFLARE_API_TOKEN` (required)
+   - `ANTHROPIC_API_KEY` (required)
+   - `LEMONSQUEEZY_SIGNING_SECRET`, `RESEND_API_KEY`, `ADMIN_TOKEN` (optional)
+   - `CLOUDFLARE_ACCOUNT_ID` (only if your token covers multiple accounts)
+3. Same screen → **Variables** (optional, override `wrangler.toml`): `ALLOWED_ORIGIN`,
+   `VARIANT_CREDITS`, `FROM_EMAIL`, `FREE_TRIAL`.
+4. **Actions → "Deploy Worker (Cloudflare)" → Run workflow.** It creates the KV namespace,
+   deploys, and sets the secrets. Copy the Worker URL from the log.
+5. Set the **`PROXY_URL`** repo Variable to that URL and re-run the **Pages** workflow so the
+   published app uses production mode.
+
+Pages publishing also needs no laptop — it runs on push to `main` once Pages is enabled
+(Settings → Pages → Source = GitHub Actions).
+
+#### Option B — from a computer: one-shot script
+
+Creates the KV namespace, prompts for secrets, deploys:
 
 ```bash
 cd backend
