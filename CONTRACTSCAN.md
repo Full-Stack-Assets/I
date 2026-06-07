@@ -155,6 +155,24 @@ node scripts/validate.js
 node --test tests/*.test.mjs
 ```
 
+## Deploy troubleshooting
+
+The Worker bundles cleanly (`cd backend && npx wrangler@4 deploy --dry-run` to confirm), so
+deploy failures are almost always one of these:
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| `Authentication error` / opens a login loop / `You are not authenticated` | Not logged in | `npx wrangler@4 login` (the script now does this first). For CI, set `CLOUDFLARE_API_TOKEN`. |
+| `KV namespace 'REPLACE_WITH_KV_NAMESPACE_ID' is not valid` (code 10009) | Ran `wrangler deploy` directly without creating KV | Use `./deploy.sh`, or `npx wrangler@4 kv namespace create CS_KV` and paste the id into `wrangler.toml`. |
+| `namespace already exists` on re-run | KV was created on a previous run | `./deploy.sh` now auto-looks-up the existing id; or copy it from `npx wrangler@4 kv namespace list`. |
+| `workers.dev subdomain ... register` | No workers.dev subdomain yet | Register one in the Cloudflare dashboard (Workers & Pages → your subdomain), then re-deploy. |
+| `More than one account` / account prompt | Multiple Cloudflare accounts | Add `account_id = "..."` to `wrangler.toml` (find it in the dashboard URL). |
+| `kv:namespace` "unknown command" | Old wrangler (v2) | Use v3+/v4: `npx wrangler@4 ...` (the script pins `wrangler@4`). |
+| Browser app gets CORS errors after deploy | `ALLOWED_ORIGIN` doesn't match the site | Set `ALLOWED_ORIGIN` in `wrangler.toml` to the exact origin (scheme + host), redeploy. |
+| `402 No credits` immediately | Working as designed (free trial used) | Redeem a code, or bump `FREE_TRIAL`. |
+
+If it's none of these, grab the exact error: `cd backend && npx wrangler@4 deploy 2>&1 | tail -30`.
+
 ## Before charging money — reality checks
 
 - Keep the **"not legal advice"** disclaimer visible (it's in the UI in two places).
