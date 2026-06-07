@@ -129,6 +129,36 @@ test('redeem: unknown code returns 404', async () => {
   assert.equal(res.status, 404);
 });
 
+test('email-report: 503 when email is not configured', async () => {
+  const env = baseEnv(); // no RESEND_API_KEY
+  const res = await worker.fetch(req('/v1/email-report', {
+    method: 'POST', body: { to: 'a@b.com', analysis: { risk_score: 1, flagged_clauses: [] } }
+  }), env);
+  assert.equal(res.status, 503);
+});
+
+test('email-report: invalid address is rejected (400)', async () => {
+  const env = baseEnv({ vars: { RESEND_API_KEY: 're_test' } });
+  const res = await worker.fetch(req('/v1/email-report', {
+    method: 'POST', body: { to: 'not-an-email', analysis: { risk_score: 1, flagged_clauses: [] } }
+  }), env);
+  assert.equal(res.status, 400);
+});
+
+test('email-report: sends when configured', async () => {
+  const env = baseEnv({ vars: { RESEND_API_KEY: 're_test', FROM_EMAIL: 'CS <x@y.com>' } });
+  const f = stubFetch({ status: 200, body: { id: 'email_1' } });
+  try {
+    const res = await worker.fetch(req('/v1/email-report', {
+      method: 'POST',
+      body: { to: 'user@example.com', analysis: { risk_score: 80, risk_level: 'High', summary: 's', flagged_clauses: [{ severity: 'critical', title: 'x', section_reference: '1', explanation: 'e', recommendation: 'r' }] } }
+    }), env);
+    assert.equal(res.status, 200);
+    assert.equal(f.calls.length, 1);
+    assert.match(f.calls[0].url, /api\.resend\.com/);
+  } finally { f.restore(); }
+});
+
 test('stats: requires the admin token', async () => {
   const env = baseEnv({ kv: { 'stat:load': '7', 'stat:buy:plan:pack': '2' } });
   const no = await worker.fetch(req('/v1/stats'), env);

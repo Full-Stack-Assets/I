@@ -1,0 +1,29 @@
+name: Calibration
+
+# Runs the analysis against the calibration contracts to catch model/prompt drift.
+# Needs an ANTHROPIC_API_KEY repo secret. Without it, the job no-ops (doesn't fail).
+# Manual: Actions → Calibration → Run workflow. Scheduled: weekly.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 8 * * 1'   # Mondays 08:17 UTC
+
+jobs:
+  calibrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run calibration harness
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MODEL: ${{ vars.CALIBRATION_MODEL }}   # optional override, e.g. claude-sonnet-4-6
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "No ANTHROPIC_API_KEY secret set — skipping calibration."
+            exit 0
+          fi
+          npm run calibrate

@@ -16,7 +16,8 @@ to that buyer.
 ## Files
 
 - `ContractScan.html` — the entire app frontend (single file). Includes report export
-  (Save-as-PDF via print, Copy-summary to clipboard) and a per-severity results filter.
+  (Save-as-PDF, Copy-summary, Email-me-the-report in server mode), a per-severity results
+  filter, and a pre-analysis size/model-cost estimate.
 - `landing/index.html` — marketing landing page for the niche pitch; CTAs point at the app
   (edit `APP_URL` at the top to where the app is hosted).
 - `backend/worker.js` — Cloudflare Worker: secure API proxy + server-side credits/codes +
@@ -75,8 +76,10 @@ The Worker exposes:
 |---|---|
 | `GET /v1/balance?token=` | current credit balance for a browser token |
 | `POST /v1/analyze` | secure proxy + credit metering (key stays server-side) |
-| `POST /v1/redeem` | validate a single-use unlock code, add credits |
-| `POST /v1/webhook/lemonsqueezy` | on purchase, mint an unlock code (HMAC-verified) |
+| `POST /v1/redeem` | validate a single-use unlock code, add credits (rate-limited) |
+| `POST /v1/email-report` | email a rendered report to the user (needs `RESEND_API_KEY`, rate-limited) |
+| `POST /v1/webhook/lemonsqueezy` | on purchase, mint + email an unlock code (HMAC-verified) |
+| `POST /v1/event`, `GET /v1/stats` | conversion analytics (counts only; stats is admin-gated) |
 
 ### 2. Point the frontend at it
 

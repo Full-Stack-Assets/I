@@ -97,6 +97,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;margin:0;col
       </div>
 
       <button class="btn w-full mt-5 text-base" id="analyze-btn" onclick="analyze()">🔍 Analyze contract</button>
+      <p id="estimate" class="text-[11px] text-gray-400 mt-2 text-center"></p>
 
       <p class="text-[11px] text-gray-400 mt-4 leading-relaxed">
         <strong>Not legal advice.</strong> ContractScan is an informational tool that uses AI to surface potential
@@ -143,6 +144,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;margin:0;col
       <h3 class="font-bold text-base">Flagged clauses</h3>
       <div class="flex gap-2">
         <button class="text-xs font-semibold accent-text border border-purple-200 rounded-lg px-3 py-1.5 hover:bg-purple-50" onclick="copySummary()" id="copy-btn" aria-label="Copy summary to clipboard">📋 Copy summary</button>
+        <button class="text-xs font-semibold accent-text border border-purple-200 rounded-lg px-3 py-1.5 hover:bg-purple-50 hidden" onclick="emailReport()" id="email-btn" aria-label="Email this report">✉ Email me</button>
         <button class="text-xs font-semibold accent-text border border-purple-200 rounded-lg px-3 py-1.5 hover:bg-purple-50" onclick="window.print()" aria-label="Save report as PDF">⬇ Save as PDF</button>
       </div>
     </div>
@@ -253,6 +255,9 @@ const LIMITS = {
 const SERVER = !!CONFIG.PROXY_URL;            // true => use backend Worker
 const PROXY = (CONFIG.PROXY_URL || '').replace(/\/$/, '');
 
+// Model input/output price per 1M tokens — used for the pre-analysis estimate.
+const PRICES = { 'claude-opus-4-8':[5,25], 'claude-sonnet-4-6':[3,15], 'claude-haiku-4-5':[1,5] };
+
 /* ============================================================
    Client token (identifies this browser to the Worker)
    ============================================================ */
@@ -319,6 +324,25 @@ function switchTab(t){
   document.getElementById('tab-upload').setAttribute('aria-selected', !paste);
   document.getElementById('pane-paste').classList.toggle('hidden', !paste);
   document.getElementById('pane-upload').classList.toggle('hidden', paste);
+  updateEstimate();
+}
+// Rough model-cost / size estimate shown before analysis (operator's API cost).
+function updateEstimate(){
+  const el = document.getElementById('estimate');
+  if(!el) return;
+  const usingPaste = !document.getElementById('pane-paste').classList.contains('hidden');
+  const [pin, pout] = PRICES[CONFIG.MODEL] || [5, 25];
+  if(usingPaste){
+    const chars = document.getElementById('contract-text').value.length;
+    if(chars < 1){ el.textContent = ''; return; }
+    const inTok = Math.ceil(chars / 4) + 500;                 // + system prompt
+    const cost = inTok / 1e6 * pin + 1500 / 1e6 * pout;       // ~1.5k output tokens
+    el.textContent = '≈ ' + inTok.toLocaleString() + ' input tokens · est. model cost $' + cost.toFixed(3);
+  } else {
+    if(!uploadedPdf){ el.textContent = ''; return; }
+    const mb = uploadedPdf.data.length * 0.75 / 1024 / 1024;  // base64 -> bytes
+    el.textContent = 'PDF ≈ ' + mb.toFixed(1) + ' MB · model cost depends on length';
+  }
 }
 function showError(msg){
   document.getElementById('error-box').classList.remove('hidden');
@@ -330,7 +354,7 @@ function clearError(){ document.getElementById('error-box').classList.add('hidde
 let charTimer=null;
 document.getElementById('contract-text').addEventListener('input', e=>{
   clearTimeout(charTimer);
-  charTimer = setTimeout(()=>{ document.getElementById('charcount').textContent = e.target.value.length.toLocaleString(); }, LIMITS.CHARCOUNT_DEBOUNCE_MS);
+  charTimer = setTimeout(()=>{ document.getElementById('charcount').textContent = e.target.value.length.toLocaleString(); updateEstimate(); }, LIMITS.CHARCOUNT_DEBOUNCE_MS);
 });
 
 /* ---- File upload (with size validation) ---- */
@@ -348,7 +372,7 @@ function handleFile(f){
   const r = new FileReader();
   r.onerror = ()=> showError('Could not read that file. Try again or paste the text.');
   r.onload = ()=>{ uploadedPdf = { data: r.result.split(',')[1], name: f.name };
-    document.getElementById('dz-label').textContent = '✓ ' + f.name; };
+    document.getElementById('dz-label').textContent = '✓ ' + f.name; updateEstimate(); };
   r.readAsDataURL(f);
 }
 
@@ -631,12 +655,30 @@ async function copySummary(){
   }
 }
 
+async function emailReport(){
+  if(!lastResult) return;
+  const to = window.prompt('Email this report to:');
+  if(!to) return;
+  const btn = document.getElementById('email-btn'); const old = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try{
+    await fetchJSON(PROXY + '/v1/email-report', {
+      method:'POST', headers:{ 'content-type':'application/json' },
+      body: JSON.stringify({ token: clientToken(), to, analysis: lastResult })
+    });
+    btn.textContent = '✓ Sent'; setTimeout(()=>{ btn.textContent = old; }, 1800);
+  }catch(e){
+    btn.textContent = old;
+    window.alert(e.message || 'Could not send the email.');
+  }finally{ btn.disabled = false; }
+}
+
 function reset(){
   document.getElementById('contract-text').value='';
   document.getElementById('charcount').textContent='0';
   uploadedPdf=null; document.getElementById('file-input').value='';
   document.getElementById('dz-label').textContent='Click to choose a PDF, or drag it here';
-  clearError(); switchTab('paste'); show('screen-input');
+  clearError(); switchTab('paste'); updateEstimate(); show('screen-input');
 }
 
 /* ============================================================
@@ -736,6 +778,7 @@ document.addEventListener('keydown', e=>{
 /* ============================================================
    Boot
    ============================================================ */
+if(SERVER) document.getElementById('email-btn').classList.remove('hidden');
 refreshCredits();
 track('load');
 </script>

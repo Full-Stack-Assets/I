@@ -43,6 +43,13 @@ Requires Node 18+ (uses global `fetch`). Each run costs a few API calls.
 3. Re-run. Aim for **high recall** on critical/moderate flags and **no confident false
    positives** before charging money.
 
+## Scheduled run
+
+`.github/workflows/calibration.yml` runs this harness weekly (and on demand via Actions → Run
+workflow) to catch model/prompt drift. Set an `ANTHROPIC_API_KEY` repo **secret** to enable it;
+without the secret the job no-ops instead of failing. Optional `CALIBRATION_MODEL` repo Variable
+overrides the model.
+
 ## Reading the output
 
 - `✅/❌` per planted flag = recall.
