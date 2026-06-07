@@ -1,0 +1,14 @@
+{
+  "contract": "vendor_msa.txt",
+  "niche": "saas_vendor",
+  "planted_red_flags": [
+    { "id": "auto_renewal", "category": "Termination", "keywords": ["automatically", "ninety", "90", "renew"], "note": "1.1 — auto-renewal with a 90-day notice window." },
+    { "id": "mid_term_price_change", "category": "Payment", "keywords": ["change pricing", "any time", "thirty"], "note": "2.1 — Provider can change pricing mid-term on 30 days' notice." },
+    { "id": "one_sided_termination", "category": "Termination", "keywords": ["terminate", "convenience", "no equivalent", "bound"], "note": "3.1 — Provider can terminate/suspend for convenience; Customer cannot." },
+    { "id": "data_training_use", "category": "Data", "keywords": ["use customer data", "train", "after termination"], "note": "4.1 — Provider trains models on Customer data, including post-termination." },
+    { "id": "as_is_no_warranty", "category": "Warranty", "keywords": ["as is", "no warranties", "fitness"], "note": "5.1 — service provided AS IS with no warranties." },
+    { "id": "low_liability_cap", "category": "Liability", "keywords": ["liability", "one (1) month", "gross negligence"], "note": "6.1 — 1-month liability cap that survives gross negligence and data breach." },
+    { "id": "one_sided_indemnity", "category": "Liability", "keywords": ["indemnify provider", "no reciprocal", "infringement"], "note": "7.1 — Customer indemnifies Provider; no IP-infringement indemnity back." },
+    { "id": "inconvenient_forum", "category": "Dispute", "keywords": ["singapore", "litigated"], "note": "8.1 — governing law/forum in Singapore is impractical for a small US customer." }
+  ]
+}

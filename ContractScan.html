@@ -283,6 +283,20 @@ async function refreshCredits(){
 }
 
 /* ============================================================
+   Analytics — fire-and-forget funnel events (server mode only).
+   Sends event name + niche/plan only; never contract content.
+   ============================================================ */
+function track(name, extra){
+  if(!SERVER) return;
+  try{
+    fetch(PROXY + '/v1/event', {
+      method:'POST', headers:{ 'content-type':'application/json' }, keepalive:true,
+      body: JSON.stringify({ name, ...(extra||{}) })
+    }).catch(()=>{});
+  }catch(_){}
+}
+
+/* ============================================================
    UI helpers
    ============================================================ */
 function show(id){ ['screen-input','screen-loading','screen-results'].forEach(s=>{
@@ -492,9 +506,11 @@ async function analyze(){
   if((have ?? 0) <= 0){ openPaywall(); return; }
 
   show('screen-loading');
+  track('analyze', { niche });
   try{
     const body = buildBody(niche, usingPaste ? text : null);
     const { result, remaining } = await callClaude(body);
+    track('analyze_success', { niche });
 
     if(SERVER){
       if(remaining!==null){ creditCache = remaining; setBadge(remaining); } else { refreshCredits(); }
@@ -607,8 +623,8 @@ function reset(){
 /* ============================================================
    Paywall + unlock
    ============================================================ */
-function openPaywall(){ openModal('paywall'); }
-function buy(plan){ const url = CONFIG.PAYMENT_LINKS[plan]; if(url) window.open(url,'_blank','noopener'); }
+function openPaywall(){ track('paywall'); openModal('paywall'); }
+function buy(plan){ track('buy', { plan }); const url = CONFIG.PAYMENT_LINKS[plan]; if(url) window.open(url,'_blank','noopener'); }
 
 async function redeem(){
   const code = document.getElementById('unlock-input').value.trim().toUpperCase();
@@ -623,7 +639,7 @@ async function redeem(){
         method:'POST', headers:{ 'content-type':'application/json' },
         body: JSON.stringify({ token: clientToken(), code })
       });
-      creditCache = r.credits; setBadge(creditCache);
+      creditCache = r.credits; setBadge(creditCache); track('redeem');
       msg.textContent = '✓ ' + (r.added||0) + ' credit' + ((r.added||0)>1?'s':'') + ' added.'; msg.style.color='#15803d';
       setTimeout(()=>closeModal('paywall'), 900);
     } else {
@@ -702,6 +718,7 @@ document.addEventListener('keydown', e=>{
    Boot
    ============================================================ */
 refreshCredits();
+track('load');
 </script>
 </body>
 </html>

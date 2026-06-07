@@ -20,9 +20,11 @@ to that buyer.
 - `landing/index.html` — marketing landing page for the niche pitch; CTAs point at the app
   (edit `APP_URL` at the top to where the app is hosted).
 - `backend/worker.js` — Cloudflare Worker: secure API proxy + server-side credits/codes +
-  optional unlock-code email delivery.
+  optional unlock-code email delivery + conversion analytics.
 - `backend/wrangler.toml` — Worker config.
-- `calibration/` — quality-gate kit: sample contracts, answer keys, and a `run.js` eval
+- `backend/deploy.sh` — one-shot deploy (KV namespace + secrets + deploy).
+- `backend/stats.html` — admin dashboard for the conversion funnel (needs `ADMIN_TOKEN`).
+- `calibration/` — quality-gate kit: 5 sample contracts, answer keys, and a `run.js` eval
   harness for the "test on 5–10 real contracts" step. See `calibration/README.md`.
 
 ## Two modes
@@ -47,11 +49,22 @@ visible to anyone who opens the page, and credits/codes can be bypassed from the
 
 ### 1. Deploy the backend
 
+One shot (creates the KV namespace, prompts for secrets, deploys):
+
+```bash
+cd backend
+./deploy.sh
+```
+
+Or manually:
+
 ```bash
 cd backend
 npx wrangler kv namespace create CS_KV      # paste the printed id into wrangler.toml
 npx wrangler secret put ANTHROPIC_API_KEY            # your sk-ant-... key
 npx wrangler secret put LEMONSQUEEZY_SIGNING_SECRET  # from the LemonSqueezy dashboard
+npx wrangler secret put RESEND_API_KEY               # optional — email the unlock code
+npx wrangler secret put ADMIN_TOKEN                  # optional — protects /v1/stats
 # edit wrangler.toml: ALLOWED_ORIGIN, FREE_TRIAL, VARIANT_CREDITS
 npx wrangler deploy
 ```
@@ -93,6 +106,14 @@ request timeout, retry count).
 and the webhook emails the code to the buyer's `user_email` automatically. Without them, the
 code is logged for manual delivery. Point your LemonSqueezy `order_created` webhook at
 `POST /v1/webhook/lemonsqueezy` and map variant IDs → credits in `VARIANT_CREDITS`.
+
+## Conversion analytics
+
+In production the app fires aggregate funnel events to the Worker (`/v1/event`):
+`load → analyze → analyze_success → paywall → buy → redeem`, tagged by niche and plan.
+**Only counts are stored** — never contract content or anything identifying. Set the
+`ADMIN_TOKEN` secret, then open `backend/stats.html`, enter your Worker URL + token, and you'll
+see the funnel plus which niches and plans convert best. Analytics are skipped in dev mode.
 
 ## Notes
 

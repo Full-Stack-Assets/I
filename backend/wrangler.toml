@@ -24,3 +24,4 @@ FROM_EMAIL = "ContractScan <onboarding@resend.dev>"
 #   ANTHROPIC_API_KEY            your sk-ant-... key
 #   LEMONSQUEEZY_SIGNING_SECRET  webhook signing secret from the LemonSqueezy dashboard
 #   RESEND_API_KEY               (optional) enables emailing the unlock code to the buyer
+#   ADMIN_TOKEN                  (optional) password for GET /v1/stats + backend/stats.html

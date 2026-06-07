@@ -32,6 +32,10 @@ export default {
         return cors(await handleAnalyze(request, env), env, origin);
       if (url.pathname === '/v1/redeem' && request.method === 'POST')
         return cors(await handleRedeem(request, env), env, origin);
+      if (url.pathname === '/v1/event' && request.method === 'POST')
+        return cors(await handleEvent(request, env), env, origin);
+      if (url.pathname === '/v1/stats' && request.method === 'GET')
+        return cors(await handleStats(request, env), env, origin);
       if (url.pathname === '/v1/webhook/lemonsqueezy' && request.method === 'POST')
         return cors(await handleWebhook(request, env), env, origin); // signature-verified, not CORS-gated
       return cors(json({ error: 'Not found' }, 404), env, origin);
@@ -130,6 +134,37 @@ async function handleRedeem(request, env) {
   return json({ credits: updated, added: rec.credits });
 }
 
+/* ---------------- analytics (aggregate counts only) ---------------- */
+// Counts funnel events to measure which niches/plans convert. Stores only
+// aggregate counters in KV — never contract content or anything identifying.
+const EVENTS = new Set(['load', 'analyze', 'analyze_success', 'paywall', 'buy', 'redeem']);
+
+async function incr(env, key) {
+  const n = parseInt((await env.CS_KV.get(key)) || '0', 10) || 0;
+  await env.CS_KV.put(key, String(n + 1));
+}
+async function handleEvent(request, env) {
+  const { name, niche, plan } = await request.json().catch(() => ({}));
+  if (!EVENTS.has(name)) return json({ ok: false }, 400);
+  const safe = (s) => String(s || '').replace(/[^a-z0-9_]/gi, '').slice(0, 32);
+  await incr(env, 'stat:' + name);
+  if (niche) await incr(env, 'stat:' + name + ':niche:' + safe(niche));
+  if (plan) await incr(env, 'stat:' + name + ':plan:' + safe(plan));
+  return json({ ok: true });
+}
+async function handleStats(request, env) {
+  if (!env.ADMIN_TOKEN || request.headers.get('X-Admin-Token') !== env.ADMIN_TOKEN)
+    throw httpError('Unauthorized', 401);
+  const out = {};
+  let cursor;
+  do {
+    const page = await env.CS_KV.list({ prefix: 'stat:', cursor });
+    for (const k of page.keys) out[k.name.slice(5)] = parseInt((await env.CS_KV.get(k.name)) || '0', 10);
+    cursor = page.list_complete ? null : page.cursor;
+  } while (cursor);
+  return json({ stats: out });
+}
+
 /* ---------------- LemonSqueezy purchase webhook ---------------- */
 // Verifies the HMAC signature, then mints a single-use code. Hand the code to
 // the buyer via the LemonSqueezy receipt/redirect or a confirmation email.
@@ -221,7 +256,7 @@ function cors(res, env, origin) {
   res.headers.set('Access-Control-Allow-Origin', allow);
   res.headers.set('Vary', 'Origin');
   res.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.headers.set('Access-Control-Allow-Headers', 'content-type, X-CS-Token');
+  res.headers.set('Access-Control-Allow-Headers', 'content-type, X-CS-Token, X-Admin-Token');
   res.headers.set('Access-Control-Expose-Headers', 'X-CS-Credits');
   return res;
 }

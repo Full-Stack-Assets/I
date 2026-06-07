@@ -1,0 +1,13 @@
+{
+  "contract": "independent_contractor.txt",
+  "niche": "freelance",
+  "planted_red_flags": [
+    { "id": "unilateral_amendment", "category": "General", "keywords": ["amend", "any time", "continued performance"], "note": "1.2 — Company can unilaterally change scope/rates/terms." },
+    { "id": "net_60", "category": "Payment", "keywords": ["sixty", "60"], "note": "2.1 — net-60 payment terms." },
+    { "id": "no_pay_on_termination", "category": "Payment", "keywords": ["terminated", "no obligation", "in progress"], "note": "2.2 — no pay for undelivered work in progress on termination." },
+    { "id": "overbroad_ip", "category": "IP", "keywords": ["whether or not related", "work", "for hire", "moral rights"], "note": "3.1 — IP grab covers work unrelated to services; moral-rights waiver." },
+    { "id": "non_compete", "category": "Non-compete", "keywords": ["non-comp", "eighteen", "18", "industry"], "note": "4.1 — 18-month industry-wide non-compete." },
+    { "id": "broad_indemnity", "category": "Liability", "keywords": ["indemnif", "hold", "harmless", "own instructions"], "note": "5.1 — Contractor indemnifies even for Company's own instructions." },
+    { "id": "one_sided_termination", "category": "Termination", "keywords": ["terminate immediately", "forfeits", "sixty"], "note": "6.1 — Company terminates instantly; Contractor forfeits fees and owes 60-day notice." }
+  ]
+}
