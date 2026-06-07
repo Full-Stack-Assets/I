@@ -16,6 +16,11 @@ FREE_TRIAL = "1"
 # Map LemonSqueezy variant IDs -> credits granted on purchase.
 VARIANT_CREDITS = "{}"
 
+# Optional: automatic unlock-code email delivery via Resend (https://resend.com).
+# Leave unset to fall back to logging the code for manual delivery.
+FROM_EMAIL = "ContractScan <onboarding@resend.dev>"
+
 # Secrets — set with `npx wrangler secret put <NAME>` (never commit these):
 #   ANTHROPIC_API_KEY            your sk-ant-... key
 #   LEMONSQUEEZY_SIGNING_SECRET  webhook signing secret from the LemonSqueezy dashboard
+#   RESEND_API_KEY               (optional) enables emailing the unlock code to the buyer

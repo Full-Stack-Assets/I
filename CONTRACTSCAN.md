@@ -15,9 +15,15 @@ to that buyer.
 
 ## Files
 
-- `ContractScan.html` — the entire frontend (single file).
-- `backend/worker.js` — Cloudflare Worker: secure API proxy + server-side credits/codes.
+- `ContractScan.html` — the entire app frontend (single file). Includes report export
+  (Save-as-PDF via print, Copy-summary to clipboard).
+- `landing/index.html` — marketing landing page for the niche pitch; CTAs point at the app
+  (edit `APP_URL` at the top to where the app is hosted).
+- `backend/worker.js` — Cloudflare Worker: secure API proxy + server-side credits/codes +
+  optional unlock-code email delivery.
 - `backend/wrangler.toml` — Worker config.
+- `calibration/` — quality-gate kit: sample contracts, answer keys, and a `run.js` eval
+  harness for the "test on 5–10 real contracts" step. See `calibration/README.md`.
 
 ## Two modes
 
@@ -82,6 +88,11 @@ request timeout, retry count).
    code is also logged by the Worker for the MVP).
 4. Buyer enters the code → `/v1/redeem` adds credits to their browser token. Each successful
    analysis spends one credit (charged server-side, only on success).
+
+**Automatic email delivery (optional):** set the `RESEND_API_KEY` secret and `FROM_EMAIL` var
+and the webhook emails the code to the buyer's `user_email` automatically. Without them, the
+code is logged for manual delivery. Point your LemonSqueezy `order_created` webhook at
+`POST /v1/webhook/lemonsqueezy` and map variant IDs → credits in `VARIANT_CREDITS`.
 
 ## Notes
 

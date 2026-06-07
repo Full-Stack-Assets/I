@@ -153,9 +153,37 @@ async function handleWebhook(request, env) {
   await env.CS_KV.put('code:' + code, JSON.stringify({
     credits, used: false, order: event?.data?.id, created_at: new Date().toISOString()
   }));
-  // Surface the code so it can be picked up from logs / forwarded to the buyer.
-  console.log('Minted unlock code', code, 'for', credits, 'credits (order', event?.data?.id, ')');
-  return json({ ok: true, code, credits });
+
+  // Deliver the code to the buyer. If email isn't configured, fall back to logs.
+  const email = event?.data?.attributes?.user_email;
+  const sent = await sendCodeEmail(env, email, code, credits);
+  if (!sent) console.log('Minted unlock code', code, 'for', credits, 'credits (order', event?.data?.id, ') — email not sent, deliver manually');
+
+  return json({ ok: true, credits, emailed: sent });
+}
+
+// Sends the unlock code via Resend (https://resend.com). Set RESEND_API_KEY +
+// FROM_EMAIL to enable; otherwise returns false and the webhook logs the code.
+async function sendCodeEmail(env, to, code, credits) {
+  if (!env.RESEND_API_KEY || !to) return false;
+  const html =
+    '<p>Thanks for your purchase! Your ContractScan unlock code is:</p>'
+    + '<p style="font-size:22px;font-weight:bold;letter-spacing:1px">' + code + '</p>'
+    + '<p>It adds <strong>' + credits + ' credit' + (credits > 1 ? 's' : '') + '</strong>. '
+    + 'Open ContractScan, hit "Already paid? Enter your unlock code", and paste it in.</p>'
+    + '<p style="color:#888;font-size:12px">ContractScan is informational only and not legal advice.</p>';
+  try {
+    const r = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { 'authorization': 'Bearer ' + env.RESEND_API_KEY, 'content-type': 'application/json' },
+      body: JSON.stringify({
+        from: env.FROM_EMAIL || 'ContractScan <onboarding@resend.dev>',
+        to, subject: 'Your ContractScan unlock code', html
+      })
+    });
+    if (!r.ok) { console.log('Resend error', r.status, await r.text()); return false; }
+    return true;
+  } catch (e) { console.log('Email send failed:', e.message); return false; }
 }
 
 /* ---------------- helpers ---------------- */
