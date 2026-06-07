@@ -82,7 +82,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;margin:0;col
       <div id="pane-paste" role="tabpanel" aria-labelledby="tab-paste">
         <label for="contract-text" class="sr-only">Contract text</label>
         <textarea id="contract-text" class="input-field" rows="11" placeholder="Paste the full contract text here…" aria-describedby="charcount"></textarea>
-        <p class="text-xs text-gray-400 mt-1"><span id="charcount">0</span> characters</p>
+        <p class="text-xs text-gray-400 mt-1"><span id="charcount">0</span> characters · <button type="button" class="accent-text underline" onclick="loadSample()">try a sample contract</button></p>
       </div>
 
       <div id="pane-upload" class="hidden" role="tabpanel" aria-labelledby="tab-upload">
@@ -257,6 +257,40 @@ const PROXY = (CONFIG.PROXY_URL || '').replace(/\/$/, '');
 
 // Model input/output price per 1M tokens — used for the pre-analysis estimate.
 const PRICES = { 'claude-opus-4-8':[5,25], 'claude-sonnet-4-6':[3,15], 'claude-haiku-4-5':[1,5] };
+
+// A short demo contract (freelance) with obvious red flags, for the "try a sample" link.
+const SAMPLE_CONTRACT = [
+  'WEB DESIGN SERVICES AGREEMENT',
+  '',
+  'This Agreement is between Acme Co. ("Client") and the contractor ("Provider").',
+  '',
+  '1. FEES. The total fee is $12,000, payable within ninety (90) days of invoice. Client may',
+  'withhold 25% as a final payment, released at Client\'s sole discretion.',
+  '',
+  '2. REVISIONS. Provider shall make all revisions and additions requested by Client at no',
+  'additional charge until Client is fully satisfied.',
+  '',
+  '3. INTELLECTUAL PROPERTY. All work product, including any pre-existing tools or libraries',
+  'used by Provider, shall be the exclusive property of Client upon creation.',
+  '',
+  '4. LIABILITY. Provider shall indemnify and hold Client harmless from any and all claims.',
+  'Provider\'s liability under this Agreement shall be unlimited.',
+  '',
+  '5. NON-COMPETE. For two (2) years after termination, Provider shall not provide services to',
+  'any business in Client\'s industry.',
+  '',
+  '6. TERMINATION. Client may terminate at any time, for any reason, paying only for work',
+  'accepted in writing as of the termination date.'
+].join('\n');
+
+function loadSample(){
+  switchTab('paste');
+  document.getElementById('niche').value = 'freelance';
+  const t = document.getElementById('contract-text');
+  t.value = SAMPLE_CONTRACT;
+  document.getElementById('charcount').textContent = SAMPLE_CONTRACT.length.toLocaleString();
+  updateEstimate(); clearError(); t.focus();
+}
 
 /* ============================================================
    Client token (identifies this browser to the Worker)

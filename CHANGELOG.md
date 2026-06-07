@@ -13,7 +13,10 @@ All notable changes to ContractScan. Format loosely follows
 - **Landing page** (`landing/`) with SEO/Open Graph/Twitter tags, `og.svg`, and a favicon.
 - **Calibration kit** (`calibration/`): 5 sample contracts with planted red flags + answer
   keys and a `run.js` recall/precision harness.
-- **Report export**: Save-as-PDF (print) and Copy-summary; **per-severity results filter**.
+- **Report export**: Save-as-PDF (print), Copy-summary, and **Email-me-the-report** (server
+  mode, via `/v1/email-report`); **per-severity results filter**; **pre-analysis cost/size
+  estimate**; **"try a sample contract"** activation link.
+- Scheduled calibration workflow (`calibration.yml`) to catch model/prompt drift.
 - **NDA niche** option (app + harness) in addition to freelance / SaaS-vendor / general.
 - **CI** (`ci.yml`) running `scripts/validate.js` + unit and Worker-integration tests
   (`tests/`); **GitHub Pages** auto-publish (`pages.yml`); root `package.json` scripts.
