@@ -50,7 +50,31 @@ visible to anyone who opens the page, and credits/codes can be bypassed from the
 
 ### 1. Deploy the backend
 
-One shot (creates the KV namespace, prompts for secrets, deploys):
+#### Option A — no laptop (iPhone / phone-only): deploy via GitHub Actions
+
+You can't run the CLI from a phone, so deploy from GitHub instead. In your phone's browser at
+github.com (request the desktop site if needed):
+
+1. **Cloudflare** (dash.cloudflare.com → My Profile → API Tokens → *Edit Cloudflare Workers*
+   template) → create a token. Copy it.
+2. **GitHub repo → Settings → Secrets and variables → Actions → Secrets**, add:
+   - `CLOUDFLARE_API_TOKEN` (required)
+   - `ANTHROPIC_API_KEY` (required)
+   - `LEMONSQUEEZY_SIGNING_SECRET`, `RESEND_API_KEY`, `ADMIN_TOKEN` (optional)
+   - `CLOUDFLARE_ACCOUNT_ID` (only if your token covers multiple accounts)
+3. Same screen → **Variables** (optional, override `wrangler.toml`): `ALLOWED_ORIGIN`,
+   `VARIANT_CREDITS`, `FROM_EMAIL`, `FREE_TRIAL`.
+4. **Actions → "Deploy Worker (Cloudflare)" → Run workflow.** It creates the KV namespace,
+   deploys, and sets the secrets. Copy the Worker URL from the log.
+5. Set the **`PROXY_URL`** repo Variable to that URL and re-run the **Pages** workflow so the
+   published app uses production mode.
+
+Pages publishing also needs no laptop — it runs on push to `main` once Pages is enabled
+(Settings → Pages → Source = GitHub Actions).
+
+#### Option B — from a computer: one-shot script
+
+Creates the KV namespace, prompts for secrets, deploys:
 
 ```bash
 cd backend
@@ -154,6 +178,24 @@ redeem single-use, stats auth, bad-signature webhook). Run locally:
 node scripts/validate.js
 node --test tests/*.test.mjs
 ```
+
+## Deploy troubleshooting
+
+The Worker bundles cleanly (`cd backend && npx wrangler@4 deploy --dry-run` to confirm), so
+deploy failures are almost always one of these:
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| `Authentication error` / opens a login loop / `You are not authenticated` | Not logged in | `npx wrangler@4 login` (the script now does this first). For CI, set `CLOUDFLARE_API_TOKEN`. |
+| `KV namespace 'REPLACE_WITH_KV_NAMESPACE_ID' is not valid` (code 10009) | Ran `wrangler deploy` directly without creating KV | Use `./deploy.sh`, or `npx wrangler@4 kv namespace create CS_KV` and paste the id into `wrangler.toml`. |
+| `namespace already exists` on re-run | KV was created on a previous run | `./deploy.sh` now auto-looks-up the existing id; or copy it from `npx wrangler@4 kv namespace list`. |
+| `workers.dev subdomain ... register` | No workers.dev subdomain yet | Register one in the Cloudflare dashboard (Workers & Pages → your subdomain), then re-deploy. |
+| `More than one account` / account prompt | Multiple Cloudflare accounts | Add `account_id = "..."` to `wrangler.toml` (find it in the dashboard URL). |
+| `kv:namespace` "unknown command" | Old wrangler (v2) | Use v3+/v4: `npx wrangler@4 ...` (the script pins `wrangler@4`). |
+| Browser app gets CORS errors after deploy | `ALLOWED_ORIGIN` doesn't match the site | Set `ALLOWED_ORIGIN` in `wrangler.toml` to the exact origin (scheme + host), redeploy. |
+| `402 No credits` immediately | Working as designed (free trial used) | Redeem a code, or bump `FREE_TRIAL`. |
+
+If it's none of these, grab the exact error: `cd backend && npx wrangler@4 deploy 2>&1 | tail -30`.
 
 ## Before charging money — reality checks
 
