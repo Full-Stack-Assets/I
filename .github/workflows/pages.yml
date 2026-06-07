@@ -1,0 +1,61 @@
+name: Deploy to GitHub Pages
+
+# Publishes the landing page at /  and the app at  /app/  on every push to main.
+# One-time setup: repo Settings → Pages → Build and deployment → Source = "GitHub Actions".
+# Optional: set a repo Variable PROXY_URL (Settings → Secrets and variables → Actions →
+# Variables) to your deployed Worker URL — it's injected into the published app so it runs
+# in production (server-side key + metered credits) instead of dev mode.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Assemble site
+        env:
+          PROXY_URL: ${{ vars.PROXY_URL }}
+        run: |
+          set -e
+          mkdir -p public/app
+          cp landing/index.html public/index.html
+          cp ContractScan.html  public/app/index.html
+
+          # Point the landing CTAs at the published app path.
+          sed -i "s|const APP_URL = '../ContractScan.html';|const APP_URL = 'app/';|" public/index.html
+
+          # If a Worker URL is configured, switch the app into production mode.
+          if [ -n "${PROXY_URL}" ]; then
+            sed -i "s|PROXY_URL: ''|PROXY_URL: '${PROXY_URL}'|" public/app/index.html
+            echo "Injected PROXY_URL into the published app."
+          else
+            echo "No PROXY_URL variable set — app published in dev mode (visitors supply their own key)."
+          fi
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

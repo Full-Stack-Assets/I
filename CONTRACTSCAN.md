@@ -124,6 +124,24 @@ see the funnel plus which niches and plans convert best. Analytics are skipped i
 - **Resilience.** API calls use a 90s timeout and retry 429/5xx with exponential backoff
   (`fetchWithRetry`). Malformed/empty model responses surface a friendly message.
 
+## Publishing (GitHub Pages)
+
+`.github/workflows/pages.yml` auto-publishes on every push to `main`:
+
+- landing page → site root `/`
+- app → `/app/`
+
+**One-time:** repo **Settings → Pages → Build and deployment → Source = "GitHub Actions"**.
+
+**Production mode:** set a repo **Variable** `PROXY_URL` (Settings → Secrets and variables →
+Actions → Variables) to your deployed Worker URL. The workflow injects it into the published
+app so it runs server-side (key protected, credits metered). Without it, the published app is
+in dev mode (visitors supply their own key — fine for a demo).
+
+CI (`.github/workflows/ci.yml`) runs `scripts/validate.js` on every PR — syntax-checks all JS,
+the HTML inline scripts, and the deploy script, and parses the calibration answer keys. Run it
+locally with `node scripts/validate.js`.
+
 ## Before charging money — reality checks
 
 - Keep the **"not legal advice"** disclaimer visible (it's in the UI in two places).
