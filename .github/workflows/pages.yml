@@ -32,8 +32,8 @@ jobs:
         run: |
           set -e
           mkdir -p public/app
-          cp landing/index.html public/index.html
-          cp ContractScan.html  public/app/index.html
+          cp -r landing/. public/          # landing index + assets (og.svg, etc.)
+          cp ContractScan.html public/app/index.html
 
           # Point the landing CTAs at the published app path.
           sed -i "s|const APP_URL = '../ContractScan.html';|const APP_URL = 'app/';|" public/index.html

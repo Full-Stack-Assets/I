@@ -20,7 +20,6 @@ const path = require('path');
 
 const MODEL = process.env.MODEL || 'claude-opus-4-8';
 const KEY = process.env.ANTHROPIC_API_KEY;
-if (!KEY) { console.error('Set ANTHROPIC_API_KEY in the environment.'); process.exit(1); }
 
 const DIR = __dirname;
 const NICHE_CONTEXT = {
@@ -85,7 +84,7 @@ function isCaught(flag, findings) {
   return hits >= Math.ceil(flag.keywords.length / 2);
 }
 
-(async () => {
+async function main() {
   const expectedDir = path.join(DIR, 'expected');
   const files = fs.readdirSync(expectedDir).filter(f => f.endsWith('.json'));
   let totalPlanted = 0, totalCaught = 0;
@@ -126,4 +125,12 @@ function isCaught(flag, findings) {
   console.log('Precision is a human call — review the "model findings" lists above for');
   console.log('anything invented, mis-scored, or alarmist before you charge money.');
   console.log('=================================================================');
-})();
+}
+
+module.exports = { isCaught, buildBody };
+
+// Only hit the API when run directly (not when imported by tests).
+if (require.main === module) {
+  if (!KEY) { console.error('Set ANTHROPIC_API_KEY in the environment.'); process.exit(1); }
+  main();
+}

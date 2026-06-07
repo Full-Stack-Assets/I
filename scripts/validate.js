@@ -39,7 +39,7 @@ function checkBash(rel) {
 }
 
 console.log('Standalone JS:');
-['backend/worker.js', 'calibration/run.js', 'scripts/validate.js'].forEach(checkJsFile);
+['backend/worker.js', 'calibration/run.js', 'scripts/validate.js', 'tests/unit.test.mjs'].forEach(checkJsFile);
 
 console.log('HTML inline JS:');
 ['ContractScan.html', 'backend/stats.html', 'landing/index.html'].forEach(checkInlineHtml);

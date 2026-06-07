@@ -111,6 +111,12 @@ async function handleAnalyze(request, env) {
 
 /* ---------------- redeem unlock code ---------------- */
 async function handleRedeem(request, env) {
+  // Throttle code-guessing: 20 attempts per IP per 10 minutes.
+  const ip = request.headers.get('CF-Connecting-IP') || 'anon';
+  const window = Math.floor(Date.now() / 600000);
+  if (!(await rateLimit(env, 'rl:redeem:' + ip + ':' + window, 20, 600)))
+    throw httpError('Too many attempts. Try again in a few minutes.', 429);
+
   const { token, code } = await request.json();
   if (!token) throw httpError('Missing token', 400);
   const norm = String(code || '').trim().toUpperCase();
@@ -142,6 +148,12 @@ const EVENTS = new Set(['load', 'analyze', 'analyze_success', 'paywall', 'buy', 
 async function incr(env, key) {
   const n = parseInt((await env.CS_KV.get(key)) || '0', 10) || 0;
   await env.CS_KV.put(key, String(n + 1));
+}
+// Fixed-window per-key limiter. Returns true if still under `limit`.
+async function rateLimit(env, key, limit, ttlSec) {
+  const n = (parseInt((await env.CS_KV.get(key)) || '0', 10) || 0) + 1;
+  await env.CS_KV.put(key, String(n), { expirationTtl: ttlSec });
+  return n <= limit;
 }
 async function handleEvent(request, env) {
   const { name, niche, plan } = await request.json().catch(() => ({}));
@@ -222,14 +234,14 @@ async function sendCodeEmail(env, to, code, credits) {
 }
 
 /* ---------------- helpers ---------------- */
-function mintCode() {
+export function mintCode() {
   const a = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
   let s = '';
   for (let i = 0; i < 8; i++) s += a[Math.floor(Math.random() * a.length)];
   return 'CS-' + s.slice(0, 4) + '-' + s.slice(4);
 }
 
-async function verifyHmac(secret, payload, signatureHex) {
+export async function verifyHmac(secret, payload, signatureHex) {
   if (!secret || !signatureHex) return false;
   const key = await crypto.subtle.importKey(
     'raw', new TextEncoder().encode(secret),
@@ -238,7 +250,7 @@ async function verifyHmac(secret, payload, signatureHex) {
   const expected = [...new Uint8Array(mac)].map(b => b.toString(16).padStart(2, '0')).join('');
   return timingSafeEqual(expected, signatureHex.toLowerCase());
 }
-function timingSafeEqual(a, b) {
+export function timingSafeEqual(a, b) {
   if (a.length !== b.length) return false;
   let diff = 0;
   for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);

@@ -123,6 +123,8 @@ see the funnel plus which niches and plans convert best. Analytics are skipped i
   authoritative balance and code state live in KV, so editing `localStorage` does nothing.
 - **Resilience.** API calls use a 90s timeout and retry 429/5xx with exponential backoff
   (`fetchWithRetry`). Malformed/empty model responses surface a friendly message.
+- **Abuse protection.** `/v1/redeem` is rate-limited to 20 attempts per IP per 10 minutes to
+  throttle unlock-code guessing.
 
 ## Publishing (GitHub Pages)
 
@@ -138,9 +140,15 @@ Actions → Variables) to your deployed Worker URL. The workflow injects it into
 app so it runs server-side (key protected, credits metered). Without it, the published app is
 in dev mode (visitors supply their own key — fine for a demo).
 
-CI (`.github/workflows/ci.yml`) runs `scripts/validate.js` on every PR — syntax-checks all JS,
-the HTML inline scripts, and the deploy script, and parses the calibration answer keys. Run it
-locally with `node scripts/validate.js`.
+CI (`.github/workflows/ci.yml`) runs on every PR: `scripts/validate.js` (syntax-checks all JS,
+the HTML inline scripts, and the deploy script; parses the calibration answer keys) plus
+`node --test tests/*.test.mjs` (unit tests for the Worker's `mintCode`/`verifyHmac`/
+`timingSafeEqual` and the calibration recall matcher). Run locally:
+
+```bash
+node scripts/validate.js
+node --test tests/*.test.mjs
+```
 
 ## Before charging money — reality checks
 
@@ -148,3 +156,5 @@ locally with `node scripts/validate.js`.
 - Test against **5–10 real contracts** in your niche and confirm the output is accurate and
   calibrated — not confidently wrong. Tune the system prompt in `buildBody()` as needed.
 - Lock `ALLOWED_ORIGIN` to your real domain (not `*`) before launch.
+- Replace `contractscan.example.com` in `landing/index.html` (canonical + Open Graph/Twitter
+  tags) with your real domain so social previews and `og.svg` resolve correctly.
